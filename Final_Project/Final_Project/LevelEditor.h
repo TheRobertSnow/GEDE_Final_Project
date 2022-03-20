@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "RoamingCamera.h"
 #include "OgreTrays.h"
+#include "GameObject.h"
 
 using namespace Ogre;
 using namespace OgreBites;
