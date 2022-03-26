@@ -41,4 +41,7 @@ public:
 	bool gPressed = false;
 	bool hPressed = false;
 	bool jPressed = false;
+	bool uPressed = false;
+	bool iPressed = false;
+	bool oPressed = false;
 };

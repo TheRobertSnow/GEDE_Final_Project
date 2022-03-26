@@ -126,6 +126,21 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "z");
 		jPressed = false;
 	}
+	else if (uPressed)
+	{
+		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "x");
+		uPressed = false;
+	}
+	else if (iPressed)
+	{
+		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "y");
+		iPressed = false;
+	}
+	else if (oPressed)
+	{
+		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "z");
+		oPressed = false;
+	}
 	else {
 		mousePos = p;
 	}
@@ -186,8 +201,29 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 			jPressed = true;
 		}
 	}
-	else {
-		cout << evt.keysym.sym;
+	// u = 117
+	else if (evt.keysym.sym == 117)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			uPressed = true;
+		}
+	}
+	// i = 105
+	else if (evt.keysym.sym == 105)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			iPressed = true;
+		}
+	}
+	// o = 111
+	else if (evt.keysym.sym == 111)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			oPressed = true;
+		}
 	}
 	return true;
 }
