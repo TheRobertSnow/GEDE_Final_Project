@@ -3,6 +3,7 @@
 #include "RoamingCamera.h"
 #include "OgreTrays.h"
 #include "GameObject.h"
+#include "ObjectController.h"
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -15,6 +16,7 @@ public:
 	void setup();
 	void setupSceneManager();
 	void setupCamera();
+	void setupObjectController();
 	void populateScene();
 	bool frameStarted(const Ogre::FrameEvent &evt);
 	bool keyPressed(const OgreBites::KeyboardEvent& evt);
@@ -25,11 +27,23 @@ public:
 	SceneNode* camera_node_;
 	Camera* camera_;
 	RoamingCamera* roaming_camera_;
+	ObjectController* object_controller_;
 
 	Entity* object_entity_;
 	SceneNode* object_entity_node_;
 
 	bool object_selected_ = false;
+	SDL_Point mousePos;
+	bool leftClickPressed = false;
+	bool xPressed = false;
+	bool yPressed = false;
+	bool zPressed = false;
+	bool gPressed = false;
+	bool hPressed = false;
+	bool jPressed = false;
+	bool uPressed = false;
+	bool iPressed = false;
+	bool oPressed = false;
 
 	Entity* x_arrow_entity_;
 	SceneNode* x_arrow_entity_node_;

@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "LevelEditor.h"
+#include "ObjectController.h"
+
+using namespace std;
 
 LevelEditor::LevelEditor() : ApplicationContext("Level Editor")
 {
@@ -12,6 +15,7 @@ void LevelEditor::setup()
 	addInputListener(this);
 	setupSceneManager();
 	setupCamera();
+	setupObjectController();
 	populateScene();
 }
 
@@ -29,6 +33,11 @@ void LevelEditor::setupSceneManager()
 void LevelEditor::setupCamera()
 {
 	roaming_camera_ = new RoamingCamera(scene_manager_, getRenderWindow(), Vector3(0, 0, 50));
+}
+
+void LevelEditor::setupObjectController()
+{
+	object_controller_ = new ObjectController();
 }
 
 void LevelEditor::populateScene()
@@ -111,6 +120,56 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	// Check what keys of the keyboard are being pressed
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
 	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
+	SDL_Point p;
+	SDL_GetMouseState(&p.x, &p.y);
+	if (xPressed)
+	{
+		object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "x");
+		xPressed = false;
+	}
+	else if (yPressed)
+	{
+		object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "y");
+		yPressed = false;
+	}
+	else if (zPressed)
+	{
+		object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "z");
+		zPressed = false;
+	}
+	else if (gPressed)
+	{
+		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "x");
+		gPressed = false;
+	}
+	else if (hPressed)
+	{
+		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "y");
+		hPressed = false;
+	}
+	else if (jPressed)
+	{
+		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "z");
+		jPressed = false;
+	}
+	else if (uPressed)
+	{
+		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "x");
+		uPressed = false;
+	}
+	else if (iPressed)
+	{
+		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "y");
+		iPressed = false;
+	}
+	else if (oPressed)
+	{
+		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "z");
+		oPressed = false;
+	}
+	else {
+		mousePos = p;
+	}
 	return true;
 }
 
@@ -119,6 +178,78 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	if (evt.keysym.sym == OgreBites::SDLK_ESCAPE)
 	{
 		getRoot()->queueEndRendering();
+	}
+	// x = 120
+	else if (evt.keysym.sym == 120)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			xPressed = true;
+		}
+	}
+	// y = 121
+	else if (evt.keysym.sym == 121)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			yPressed = true;
+		}
+	}
+	// z = 122
+	else if (evt.keysym.sym == 122)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			zPressed = true;
+		}
+	}
+	// g = 103
+	else if (evt.keysym.sym == 103)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			gPressed = true;
+		}
+	}
+	// h = 104
+	else if (evt.keysym.sym == 104)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			hPressed = true;
+		}
+	}
+	// j = 106
+	else if (evt.keysym.sym == 106)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			jPressed = true;
+		}
+	}
+	// u = 117
+	else if (evt.keysym.sym == 117)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			uPressed = true;
+		}
+	}
+	// i = 105
+	else if (evt.keysym.sym == 105)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			iPressed = true;
+		}
+	}
+	// o = 111
+	else if (evt.keysym.sym == 111)
+	{
+		if (object_entity_node_->getShowBoundingBox())
+		{
+			oPressed = true;
+		}
 	}
 	return true;
 }
@@ -138,6 +269,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		Ray mouseRay = roaming_camera_->getCamera()->getCameraToViewportRay(offsetX, offsetY);
 		if (evt.button == OgreBites::BUTTON_LEFT)
 		{
+			leftClickPressed = true;
 			// Check if ray intersects with box
 			std::pair<bool, Ogre::Real> result = mouseRay.intersects(object_entity_node_->_getWorldAABB());
 			std::pair<bool, Ogre::Real> result_x = mouseRay.intersects(x_arrow_entity_node_->_getWorldAABB());
@@ -184,7 +316,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 	{
 		if (evt.button == OgreBites::BUTTON_LEFT)
 		{
-
+			leftClickPressed = false;
 		}
 	}
 	return true;
