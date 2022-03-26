@@ -75,6 +75,7 @@ void LevelEditor::populateScene()
 	object_entity_node_->setPosition(newSpawnPosition);
 	object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
 	object_entity_->setCastShadows(true);
+
 }
 
 bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
