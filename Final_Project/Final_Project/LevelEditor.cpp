@@ -76,6 +76,31 @@ void LevelEditor::populateScene()
 	object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
 	object_entity_->setCastShadows(true);
 
+	// axis arrow
+	x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
+	x_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	x_arrow_entity_node_->attachObject(x_arrow_entity_);
+	x_arrow_entity_node_->setPosition(Vector3(2, 0, 0));
+	x_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	x_arrow_entity_node_->yaw(Ogre::Degree(270));
+	x_arrow_entity_->setCastShadows(false);
+
+	y_arrow_entity_ = scene_manager_->createEntity("Y_arrow.mesh");
+	y_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	y_arrow_entity_node_->attachObject(y_arrow_entity_);
+	y_arrow_entity_node_->setPosition(Vector3(0, 2, 0));
+	y_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	y_arrow_entity_node_->pitch(Ogre::Degree(90));
+	y_arrow_entity_->setCastShadows(false);
+
+	z_arrow_entity_ = scene_manager_->createEntity("Z_arrow.mesh");
+	z_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	z_arrow_entity_node_->attachObject(z_arrow_entity_);
+	z_arrow_entity_node_->setPosition(Vector3(0, 0, 2));
+	z_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	z_arrow_entity_node_->yaw(Ogre::Degree(180));
+	z_arrow_entity_->setCastShadows(false);
+
 }
 
 bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
@@ -115,6 +140,9 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		{
 			// Check if ray intersects with box
 			std::pair<bool, Ogre::Real> result = mouseRay.intersects(object_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_x = mouseRay.intersects(x_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_y = mouseRay.intersects(y_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_z = mouseRay.intersects(z_arrow_entity_node_->_getWorldAABB());
 
 			// If box not selected
 			if (result.first && !object_selected_)
@@ -125,6 +153,30 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 			else 
 			{
 				object_entity_node_->showBoundingBox(false);
+			}
+			if (result_x.first) 
+			{
+				x_arrow_entity_node_->showBoundingBox(true);
+			}
+			else
+			{
+				x_arrow_entity_node_->showBoundingBox(false);
+			}
+			if (result_y.first)
+			{
+				y_arrow_entity_node_->showBoundingBox(true);
+			}
+			else
+			{
+				y_arrow_entity_node_->showBoundingBox(false);
+			}
+			if (result_z.first)
+			{
+				z_arrow_entity_node_->showBoundingBox(true);
+			}
+			else
+			{
+				z_arrow_entity_node_->showBoundingBox(false);
 			}
 		}
 	}

@@ -30,4 +30,11 @@ public:
 	SceneNode* object_entity_node_;
 
 	bool object_selected_ = false;
+
+	Entity* x_arrow_entity_;
+	SceneNode* x_arrow_entity_node_;
+	Entity* y_arrow_entity_;
+	SceneNode* y_arrow_entity_node_;
+	Entity* z_arrow_entity_;
+	SceneNode* z_arrow_entity_node_;
 };
