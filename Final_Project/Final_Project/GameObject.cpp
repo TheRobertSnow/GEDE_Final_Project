@@ -22,4 +22,5 @@ GameObject::~GameObject()
 void GameObject::setSelected(bool val)
 {
 	is_selected_ = val;
+	scene_node_->showBoundingBox(is_selected_);
 }
