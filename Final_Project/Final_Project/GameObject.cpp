@@ -2,7 +2,8 @@
 #include "GameObject.h"
 
 GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
-	Vector3 position, Vector3 scale)
+	Vector3 position, Vector3 scale, bool castShadows = true,
+	bool visible = true, int yawAngle = 0, int pitchAngle = 0, String axis = "")
 {
 	std::cout << "Hello, i exist now!" << std::endl;
 	is_selected_ = false;
@@ -12,7 +13,11 @@ GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 	scene_node_->attachObject(entity_);
 	scene_node_->setPosition(position);
 	scene_node_->setScale(scale);
-	entity_->setCastShadows(true);
+	entity_->setCastShadows(castShadows);
+	scene_node_->setVisible(visible);
+	scene_node_->yaw(Ogre::Degree(yawAngle));
+	scene_node_->pitch(Ogre::Degree(pitchAngle));
+	axis_ = axis;
 }
 
 // Duplication constructor
