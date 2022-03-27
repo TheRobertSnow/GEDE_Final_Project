@@ -127,12 +127,6 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		else {
 			scale_tool_->SetVisible(true, true, true);
 		}
-	}
-	else {
-		scale_tool_->SetVisible(false, false, false);
-	}
-	if (leftClickPressed)
-	{
 		if (selected_object_ != nullptr) {
 			// Move Entities
 			move_tool_->MoveSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, move_tool_->GetShowBoundingBox());
@@ -140,10 +134,6 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 			scale_tool_->ScaleSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, scale_tool_->GetShowBoundingBox());
 		}
 		leftClickPressed = false;
-	}
-	mousePos = p;
-	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
-		leftClickPressed = true;
 	}
 	return true;
 }
@@ -183,6 +173,10 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 			scale_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
 		}
 	}
+	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
+	{
+		removeSelectedGameObject();
+	}
 	return true;
 }
 
@@ -204,16 +198,21 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		{
 			std::pair<bool, Ogre::Real> result;
 			bool obj_was_selected = false;
+			// Loop through list of game objects
 			for (auto const& i : game_object_list_) {
+				// Test if mouse ray collides with a game object
 				result = mouseRay.intersects(i->scene_node_->_getWorldAABB());
+				// If ray collides with game object
 				if (result.first) 
 				{
+					// If a game object is already selected
 					if (selected_object_ != nullptr)
 					{
 						selected_object_->setSelected(false);
 						selected_object_ = i;
 						selected_object_->setSelected(true);
 					}
+					// If a game object is not selected
 					else
 					{
 						selected_object_ = i;
@@ -222,16 +221,9 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					move_tool_->MoveToolToNewEntity(i->scene_node_);
 					scale_tool_->MoveToolToNewEntity(i->scene_node_);
 					obj_was_selected = true;
+					cout << "selected_object_: " << selected_object_ << endl << "list item: " << i << endl;
 				}
 			}
-			/*if (!obj_was_selected)
-			{
-				if (selected_object_ != nullptr)
-				{
-					selected_object_->setSelected(false);
-					selected_object_ = nullptr;
-				}
-			}*/
 			if (xPressed) {
 				std::pair<bool, Ogre::Real> resultMove;
 				for (auto const& i : move_tool_list_) {
@@ -273,4 +265,23 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		}
 	}
 	return true;
+}
+
+void LevelEditor::removeSelectedGameObject()
+{
+	// Check if any object is seleceted
+	if (selected_object_ != nullptr)
+	{
+		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
+		// Destroy the GameObject and remove it from game_object_list_
+		delete selected_object_;
+		game_object_list_.remove(selected_object_);
+		selected_object_ = nullptr;
+		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
+	}
+}
+
+void LevelEditor::duplicateSelectedGameObject()
+{
+
 }
