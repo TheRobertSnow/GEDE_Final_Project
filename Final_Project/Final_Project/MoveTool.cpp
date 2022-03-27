@@ -4,46 +4,46 @@
 
 MoveTool::MoveTool(SceneNode* x_arrow, SceneNode* y_arrow, SceneNode* z_arrow)
 {
-	x_arrow = x_arrow;
-	y_arrow = y_arrow;
-	z_arrow = z_arrow;
+	x_arrow_ = x_arrow;
+	y_arrow_ = y_arrow;
+	z_arrow_ = z_arrow;
 }
 
 void MoveTool::SetVisible(bool x = false, bool y = false, bool z = false)
 {
-	x_arrow->setVisible(x);
-	y_arrow->setVisible(y);
-	z_arrow->setVisible(z);
+	x_arrow_->setVisible(x);
+	y_arrow_->setVisible(y);
+	z_arrow_->setVisible(z);
 }
 
 void MoveTool::ShowBoundingBoxes(bool x = false, bool y = false, bool z = false)
 {
-	x_arrow->showBoundingBox(false);
-	y_arrow->showBoundingBox(false);
-	z_arrow->showBoundingBox(false);
+	x_arrow_->showBoundingBox(x);
+	y_arrow_->showBoundingBox(y);
+	z_arrow_->showBoundingBox(z);
 }
 
-bool MoveTool::GetShowBoundingBox(String axis)
+String MoveTool::GetShowBoundingBox()
 {
-	if (axis == "x") {
-		return x_arrow->getShowBoundingBox();
+	if (x_arrow_->getShowBoundingBox()){
+		return "x";
 	}
-	else if (axis == "y") {
-		return y_arrow->getShowBoundingBox();
+	else if (y_arrow_->getShowBoundingBox()) {
+		return "y";
 	}
-	else if (axis == "z") {
-		return z_arrow->getShowBoundingBox();
+	else if (z_arrow_->getShowBoundingBox()) {
+		return "z";
 	}
+	return "";
 }
 
 void MoveTool::MoveSelectedEntity(SceneNode* selected_entity, SDL_Point new_pos, SDL_Point old_pos, Ogre::Real delta_time, String axis)
 {
-	if (MoveTool::GetShowBoundingBox(axis)) {
+	if (MoveTool::GetShowBoundingBox() != "") {
 		int moveX = new_pos.x - old_pos.x;
 		int moveY = old_pos.y - new_pos.y;
 		int moveZ = new_pos.y - old_pos.y;
 		Vector3 selectedEntityPos = selected_entity->getPosition();
-		Vector3 selectedEntityScale = selected_entity->getScale() * 50;
 		if (axis == "x") {
 			selectedEntityPos.x += (moveX * delta_time) * 15;
 		}
@@ -56,17 +56,17 @@ void MoveTool::MoveSelectedEntity(SceneNode* selected_entity, SDL_Point new_pos,
 		selected_entity->setPosition(selectedEntityPos);
 
 		// Also move tool with entity :)
-		x_arrow->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
-		y_arrow->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
-		z_arrow->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
+		x_arrow_->setPosition(selectedEntityPos.x + 2, selectedEntityPos.y, selectedEntityPos.z);
+		y_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2, selectedEntityPos.z);
+		z_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2);
 	}
 }
 
 void MoveTool::MoveToolToNewEntity(SceneNode* selected_entity)
 {
 	Vector3 selectedEntityPos = selected_entity->getPosition();
-	Vector3 selectedEntityScale = selected_entity->getScale() * 50;
-	x_arrow->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
-	y_arrow->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
-	z_arrow->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
+	x_arrow_->setPosition(selectedEntityPos.x + 2, selectedEntityPos.y, selectedEntityPos.z);
+	y_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2, selectedEntityPos.z);
+	z_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2);
+	MoveTool::ShowBoundingBoxes(false, false, false);
 }

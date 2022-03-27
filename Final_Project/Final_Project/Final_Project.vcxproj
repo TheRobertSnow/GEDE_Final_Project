@@ -154,6 +154,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MoveTool.cpp" />
     <ClCompile Include="ObjectController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -162,13 +163,18 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RoamingCamera.cpp" />
+    <ClCompile Include="RotateTool.cpp" />
+    <ClCompile Include="ScaleTool.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="LevelEditor.h" />
+    <ClInclude Include="MoveTool.h" />
     <ClInclude Include="ObjectController.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="RoamingCamera.h" />
+    <ClInclude Include="RotateTool.h" />
+    <ClInclude Include="ScaleTool.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="plugins.cfg" />

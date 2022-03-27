@@ -7,7 +7,7 @@ class GameObject
 public:
 	GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 		Vector3 position, Vector3 scale, bool castShadows, 
-		bool visible, int yawAngle, int pitchAngle);
+		bool visible, int yawAngle, int pitchAngle, String axis);
 	virtual ~GameObject();
 	void setSelected(bool val);
 
@@ -15,5 +15,6 @@ public:
 	Entity* entity_;
 	SceneNode* scene_node_;
 	bool is_selected_;
+	String axis_;
 };
 

@@ -3,7 +3,7 @@
 
 GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 	Vector3 position, Vector3 scale, bool castShadows = true,
-	bool visible = true, int yawAngle = 0, int pitchAngle = 0)
+	bool visible = true, int yawAngle = 0, int pitchAngle = 0, String axis = "")
 {
 	is_selected_ = false;
 	scene_manager_ = scene_manager;
@@ -16,6 +16,7 @@ GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 	scene_node_->setVisible(visible);
 	scene_node_->yaw(Ogre::Degree(yawAngle));
 	scene_node_->pitch(Ogre::Degree(pitchAngle));
+	axis_ = axis;
 }
 
 GameObject::~GameObject()
