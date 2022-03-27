@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="LE_Event.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
@@ -168,6 +169,7 @@
     <ClCompile Include="ScaleTool.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LE_Event.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="LevelEditor.h" />

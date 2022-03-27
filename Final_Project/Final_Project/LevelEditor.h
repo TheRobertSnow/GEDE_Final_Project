@@ -8,6 +8,7 @@
 #include "ScaleTool.h"
 #include "ObjectController.h"
 #include "InputManager.h"
+#include "LE_Event.h"
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -38,7 +39,7 @@ public:
 	RoamingCamera* roaming_camera_;
 	//ObjectController* object_controller_;
 	std::list<GameObject*> game_object_list_;
-
+	std::deque<int> event_queue;
 	MoveTool* move_tool_;
 	std::list<GameObject*> move_tool_list_;
 	ScaleTool* scale_tool_;

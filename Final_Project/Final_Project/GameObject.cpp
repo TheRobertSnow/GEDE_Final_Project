@@ -30,6 +30,7 @@ GameObject::GameObject(GameObject* src)
 	scene_node_->attachObject(entity_);
 	scene_node_->setPosition(Vector3(3, 1, 3));
 	scene_node_->setScale(src->scene_node_->getScale());
+	scene_node_->setOrientation(src->scene_node_->getOrientation());
 	entity_->setCastShadows(true);
 }
 
