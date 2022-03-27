@@ -4,6 +4,7 @@
 #include "OgreTrays.h"
 #include "GameObject.h"
 #include "ObjectController.h"
+#include "InputManager.h"
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -20,6 +21,7 @@ public:
 	void populateScene();
 	void removeSelectedGameObject();
 	void duplicateSelectedGameObject();
+	void setupInputManager();
 
 	bool frameStarted(const Ogre::FrameEvent &evt);
 	bool keyPressed(const OgreBites::KeyboardEvent& evt);
@@ -27,6 +29,7 @@ public:
 
 	Root* root_;
 	SceneManager* scene_manager_;
+	InputManager* input_manager_;
 	SceneNode* camera_node_;
 	Camera* camera_;
 	RoamingCamera* roaming_camera_;
@@ -47,6 +50,7 @@ public:
 	bool uPressed = false;
 	bool iPressed = false;
 	bool oPressed = false;
+	bool d_pressed_ = false;
 
 	// move arrows
 	Entity* move_x_arrow_entity_;

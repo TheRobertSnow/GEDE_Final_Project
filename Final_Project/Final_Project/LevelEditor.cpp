@@ -17,6 +17,12 @@ void LevelEditor::setup()
 	setupCamera();
 	setupObjectController();
 	populateScene();
+	setupInputManager();
+}
+
+void LevelEditor::setupInputManager() 
+{
+	input_manager_ = new InputManager();
 }
 
 void LevelEditor::setupSceneManager()
@@ -144,9 +150,30 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	const Ogre::Real delta_time = evt.timeSinceLastFrame;
 	// Check what keys of the keyboard are being pressed
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
-	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
 	SDL_Point p;
-	SDL_GetMouseState(&p.x, &p.y);
+	const Uint32 mouse_state = SDL_GetMouseState(&p.x, &p.y);
+
+	// Manage new input in input manager
+	input_manager_->update(state, &mouse_state);
+
+	if (state[SDL_SCANCODE_LCTRL])
+	{
+		if (state[SDL_SCANCODE_D])
+		{
+			if (!d_pressed_)
+			{
+				d_pressed_ = true;
+				if (selected_object_ != nullptr) duplicateSelectedGameObject();
+			}
+		}
+		else
+		{
+			d_pressed_ = false;
+		}
+	}
+	// update the roaming camera
+	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
+
 	// Move Button
 	if (xPressed) {
 		move_x_arrow_entity_node_->setVisible(true);
@@ -260,6 +287,19 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	{
 		removeSelectedGameObject();
 	}
+	/*else if (evt.keysym.sym == SDLK_LCTRL)
+	{
+		std::cout << "L_CTRL" << std::endl;
+		if (d_pressed_)
+		{
+			duplicateSelectedGameObject();
+		}
+	}
+	else if (evt.keysym.sym == SDLK_d)
+	{
+		std::cout << "Cum" << std::endl;
+		d_pressed_ = true;
+	}*/
 	return true;
 }
 
@@ -395,5 +435,5 @@ void LevelEditor::removeSelectedGameObject()
 
 void LevelEditor::duplicateSelectedGameObject()
 {
-
+	game_object_list_.push_back(new GameObject(selected_object_));
 }

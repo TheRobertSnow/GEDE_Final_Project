@@ -15,6 +15,19 @@ GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 	entity_->setCastShadows(true);
 }
 
+// Duplication constructor
+GameObject::GameObject(GameObject* src)
+{
+	is_selected_ = src->is_selected_;
+	scene_manager_ = src->scene_manager_;
+	entity_ = scene_manager_->createEntity(src->entity_->getMesh()->getName());
+	scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	scene_node_->attachObject(entity_);
+	scene_node_->setPosition(Vector3(3, 1, 3));
+	scene_node_->setScale(src->scene_node_->getScale());
+	entity_->setCastShadows(true);
+}
+
 GameObject::~GameObject()
 {
 	std::cout << "Ok, guess I'll kill myself!" << std::endl;
