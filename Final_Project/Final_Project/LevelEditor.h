@@ -3,9 +3,9 @@
 #include "RoamingCamera.h"
 #include "OgreTrays.h"
 #include "GameObject.h"
-//#include "ObjectController.h"
 #include "MoveTool.h"
 #include "ScaleTool.h"
+#include "RotateTool.h"
 
 using namespace Ogre;
 using namespace OgreBites;
@@ -18,7 +18,6 @@ public:
 	void setup();
 	void setupSceneManager();
 	void setupCamera();
-	//void setupObjectController();
 	void populateScene();
 	void removeSelectedGameObject();
 	void duplicateSelectedGameObject();
@@ -32,13 +31,14 @@ public:
 	SceneNode* camera_node_;
 	Camera* camera_;
 	RoamingCamera* roaming_camera_;
-	//ObjectController* object_controller_;
 	std::list<GameObject*> game_object_list_;
 
 	MoveTool* move_tool_;
 	std::list<GameObject*> move_tool_list_;
 	ScaleTool* scale_tool_;
 	std::list<GameObject*> scale_tool_list_;
+	RotateTool* rotate_tool_;
+	std::list<GameObject*> rotate_tool_list_;
 
 	GameObject* selected_object_;
 
@@ -48,29 +48,4 @@ public:
 	bool xPressed = false;
 	bool yPressed = false;
 	bool zPressed = false;
-	/*
-	bool gPressed = false;
-	bool hPressed = false;
-	bool jPressed = false;
-	bool uPressed = false;
-	bool iPressed = false;
-	bool oPressed = false;
-	*/
-	// move arrows
-	/*
-	Entity* move_x_arrow_entity_;
-	SceneNode* move_x_arrow_entity_node_;
-	Entity* move_y_arrow_entity_;
-	SceneNode* move_y_arrow_entity_node_;
-	Entity* move_z_arrow_entity_;
-	SceneNode* move_z_arrow_entity_node_;
-
-	// scale arrows
-	Entity* scale_x_arrow_entity_;
-	SceneNode* scale_x_arrow_entity_node_;
-	Entity* scale_y_arrow_entity_;
-	SceneNode* scale_y_arrow_entity_node_;
-	Entity* scale_z_arrow_entity_;
-	SceneNode* scale_z_arrow_entity_node_;
-	*/
 };
