@@ -48,10 +48,19 @@ public:
 	bool iPressed = false;
 	bool oPressed = false;
 
-	Entity* x_arrow_entity_;
-	SceneNode* x_arrow_entity_node_;
-	Entity* y_arrow_entity_;
-	SceneNode* y_arrow_entity_node_;
-	Entity* z_arrow_entity_;
-	SceneNode* z_arrow_entity_node_;
+	// move arrows
+	Entity* move_x_arrow_entity_;
+	SceneNode* move_x_arrow_entity_node_;
+	Entity* move_y_arrow_entity_;
+	SceneNode* move_y_arrow_entity_node_;
+	Entity* move_z_arrow_entity_;
+	SceneNode* move_z_arrow_entity_node_;
+
+	// scale arrows
+	Entity* scale_x_arrow_entity_;
+	SceneNode* scale_x_arrow_entity_node_;
+	Entity* scale_y_arrow_entity_;
+	SceneNode* scale_y_arrow_entity_node_;
+	Entity* scale_z_arrow_entity_;
+	SceneNode* scale_z_arrow_entity_node_;
 };
