@@ -1,0 +1,22 @@
+#pragma once
+#include "pch.h"
+#include "GameObject.h"
+
+using namespace Ogre;
+using namespace OgreBites;
+
+class RotateTool
+{
+public:
+	RotateTool(SceneNode* x_arrow, SceneNode* y_arrow, SceneNode* z_arrow);
+	virtual ~RotateTool() {};
+	void SetVisible(bool x, bool y, bool z);
+	void ShowBoundingBoxes(bool x, bool y, bool z);
+	bool GetShowBoundingBox(String axis);
+	void RotateSelectedEntity(SceneNode* selected_entity, SDL_Point new_pos, SDL_Point old_pos, Ogre::Real delta_time, String axis);
+	void MoveToolToNewEntity(SceneNode* selected_entity);
+
+	SceneNode* x_arrow;
+	SceneNode* y_arrow;
+	SceneNode* z_arrow;
+};
