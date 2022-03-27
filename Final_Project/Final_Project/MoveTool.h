@@ -4,25 +4,18 @@
 using namespace Ogre;
 using namespace OgreBites;
 
-class MoveTool :
+class MoveTool
 {
 public:
-	MoveTool();
+	MoveTool(SceneNode* x_arrow, SceneNode* y_arrow, SceneNode* z_arrow);
 	virtual ~MoveTool() {};
+	void SetVisible(bool x, bool y, bool z);
+	void ShowBoundingBoxes(bool x, bool y, bool z);
+	bool GetShowBoundingBox(String axis);
+	void MoveSelectedEntity(SceneNode* selected_entity, SDL_Point new_pos, SDL_Point old_pos, Ogre::Real delta_time, String axis);
+	void MoveToolToNewEntity(SceneNode* selected_entity);
 
-	// move arrows
-	Entity* move_x_arrow_entity_;
-	SceneNode* move_x_arrow_entity_node_;
-	Entity* move_y_arrow_entity_;
-	SceneNode* move_y_arrow_entity_node_;
-	Entity* move_z_arrow_entity_;
-	SceneNode* move_z_arrow_entity_node_;
-
-	// scale arrows
-	Entity* scale_x_arrow_entity_;
-	SceneNode* scale_x_arrow_entity_node_;
-	Entity* scale_y_arrow_entity_;
-	SceneNode* scale_y_arrow_entity_node_;
-	Entity* scale_z_arrow_entity_;
-	SceneNode* scale_z_arrow_entity_node_;
+	SceneNode* x_arrow;
+	SceneNode* y_arrow;
+	SceneNode* z_arrow;
 };
