@@ -77,6 +77,9 @@ void LevelEditor::populateScene()
 	directionalLightNode->setDirection(Ogre::Vector3(0, -1, -1));
 
 	// Add object to scene
+	/*GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 0, 0), Vector3(0.01, 0.01, 0.01));
+	game_object_list_.push_back(newObj);*/
+	// Add object to scene
 	Ogre::Vector3 newSpawnPosition = Ogre::Vector3(0, 0, 0);
 	object_entity_ = scene_manager_->createEntity("cube.mesh");
 	object_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
@@ -273,6 +276,12 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		Ray mouseRay = roaming_camera_->getCamera()->getCameraToViewportRay(offsetX, offsetY);
 		if (evt.button == OgreBites::BUTTON_LEFT)
 		{
+			std::list<GameObject*>::iterator it;
+			for (it = game_object_list_.begin(); it != game_object_list_.end(); ++it)
+			{
+
+			}
+
 			leftClickPressed = true;
 			// Check if ray intersects with box
 			std::pair<bool, Ogre::Real> result = mouseRay.intersects(object_entity_node_->_getWorldAABB());
