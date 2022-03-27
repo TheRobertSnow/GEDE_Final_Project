@@ -18,6 +18,9 @@ public:
 	void setupCamera();
 	void setupObjectController();
 	void populateScene();
+	void removeSelectedGameObject();
+	void duplicateSelectedGameObject();
+
 	bool frameStarted(const Ogre::FrameEvent &evt);
 	bool keyPressed(const OgreBites::KeyboardEvent& evt);
 	bool mousePressed(const OgreBites::MouseButtonEvent& evt);
@@ -31,9 +34,6 @@ public:
 	std::list<GameObject*> game_object_list_;
 
 	GameObject* selected_object_;
-
-	Entity* object_entity_;
-	SceneNode* object_entity_node_;
 
 	bool object_selected_ = false;
 	SDL_Point mousePos;

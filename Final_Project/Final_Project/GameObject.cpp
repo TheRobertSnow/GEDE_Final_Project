@@ -4,6 +4,7 @@
 GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 	Vector3 position, Vector3 scale)
 {
+	std::cout << "Hello, i exist now!" << std::endl;
 	is_selected_ = false;
 	scene_manager_ = scene_manager;
 	entity_ = scene_manager_->createEntity(mesh_file_name);
@@ -16,7 +17,10 @@ GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 
 GameObject::~GameObject()
 {
-
+	std::cout << "Ok, guess I'll kill myself!" << std::endl;
+	scene_node_->removeAndDestroyAllChildren();
+	scene_manager_->destroyEntity(entity_);
+	scene_manager_->destroySceneNode(scene_node_);
 }
 
 void GameObject::setSelected(bool val)

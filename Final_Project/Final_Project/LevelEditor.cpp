@@ -77,16 +77,8 @@ void LevelEditor::populateScene()
 	directionalLightNode->setDirection(Ogre::Vector3(0, -1, -1));
 
 	// Add object to scene
-	GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 0, 0), Vector3(0.01, 0.01, 0.01));
+	GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 3, 0), Vector3(0.01, 0.01, 0.01));
 	game_object_list_.push_back(newObj);
-	// Add object to scene
-	Ogre::Vector3 newSpawnPosition = Ogre::Vector3(0, 0, 0);
-	object_entity_ = scene_manager_->createEntity("cube.mesh");
-	object_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	object_entity_node_->attachObject(object_entity_);
-	object_entity_node_->setPosition(newSpawnPosition);
-	object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
-	object_entity_->setCastShadows(true);
 
 	// move arrows
 	move_x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
@@ -179,48 +171,54 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	}
 	if (leftClickPressed)
 	{
-		// Move Entities
-		if (move_x_arrow_entity_node_->getShowBoundingBox())
+		if (selected_object_ != nullptr)
 		{
-			object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "x");
+			// Move Entities
+			if (move_x_arrow_entity_node_->getShowBoundingBox())
+			{
+				object_controller_->MoveEntity(selected_object_->scene_node_, p, mousePos, delta_time, "x");
+			}
+			if (move_y_arrow_entity_node_->getShowBoundingBox())
+			{
+				object_controller_->MoveEntity(selected_object_->scene_node_, p, mousePos, delta_time, "y");
+			}
+			if (move_z_arrow_entity_node_->getShowBoundingBox())
+			{
+				object_controller_->MoveEntity(selected_object_->scene_node_, p, mousePos, delta_time, "z");
+			}
+			// Scale Entities
+			if (scale_x_arrow_entity_node_->getShowBoundingBox())
+			{
+				object_controller_->ScaleEntity(selected_object_->scene_node_, p, mousePos, delta_time, "x");
+			}
+			if (scale_y_arrow_entity_node_->getShowBoundingBox())
+			{
+				object_controller_->ScaleEntity(selected_object_->scene_node_, p, mousePos, delta_time, "y");
+			}
+			if (scale_z_arrow_entity_node_->getShowBoundingBox())
+			{
+				object_controller_->ScaleEntity(selected_object_->scene_node_, p, mousePos, delta_time, "z");
+			}
+			leftClickPressed = false;
+			//xPressed = false;
 		}
-		if (move_y_arrow_entity_node_->getShowBoundingBox())
-		{
-			object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "y");
-		}
-		if (move_z_arrow_entity_node_->getShowBoundingBox())
-		{
-			object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "z");
-		}
-		// Scale Entities
-		if (scale_x_arrow_entity_node_->getShowBoundingBox())
-		{
-			object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "x");
-		}
-		if (scale_y_arrow_entity_node_->getShowBoundingBox())
-		{
-			object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "y");
-		}
-		if (scale_z_arrow_entity_node_->getShowBoundingBox())
-		{
-			object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "z");
-		}
-		leftClickPressed = false;
-		//xPressed = false;
 	}
 	mousePos = p;
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
 		leftClickPressed = true;
 	}
-	// Make Arrows Follow Selected Entity
-	Vector3 selectedEntityPos = object_entity_node_->getPosition();
-	Vector3 selectedEntityScale = object_entity_node_->getScale() * 50;
-	move_x_arrow_entity_node_->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
-	move_y_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
-	move_z_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
-	scale_x_arrow_entity_node_->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
-	scale_y_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
-	scale_z_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
+	if (selected_object_ != nullptr)
+	{
+		// Make Arrows Follow Selected Entity
+		Vector3 selectedEntityPos = selected_object_->scene_node_->getPosition();
+		Vector3 selectedEntityScale = selected_object_->scene_node_->getScale() * 50;
+		move_x_arrow_entity_node_->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
+		move_y_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
+		move_z_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
+		scale_x_arrow_entity_node_->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
+		scale_y_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
+		scale_z_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
+	}
 	return true;
 }
 
@@ -258,6 +256,10 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 			xPressed = false;
 		}
 	}
+	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
+	{
+		removeSelectedGameObject();
+	}
 	return true;
 }
 
@@ -279,22 +281,28 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		{
 			std::pair<bool, Ogre::Real> result;
 			bool obj_was_selected = false;
+			// Loop through list of game objects
 			for (auto const& i : game_object_list_) {
+				// Test if mouse ray collides with a game object
 				result = mouseRay.intersects(i->scene_node_->_getWorldAABB());
+				// If ray collides with game object
 				if (result.first) 
 				{
+					// If a game object is already selected
 					if (selected_object_ != nullptr)
 					{
 						selected_object_->setSelected(false);
 						selected_object_ = i;
 						selected_object_->setSelected(true);
 					}
+					// If a game object is not selected
 					else
 					{
 						selected_object_ = i;
 						selected_object_->setSelected(true);
 					}
 					obj_was_selected = true;
+					cout << "selected_object_: " << selected_object_ << endl << "list item: " << i << endl;
 				}
 			}
 			if (!obj_was_selected)
@@ -315,17 +323,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 			std::pair<bool, Ogre::Real> result_scale_y = mouseRay.intersects(scale_y_arrow_entity_node_->_getWorldAABB());
 			std::pair<bool, Ogre::Real> result_scale_z = mouseRay.intersects(scale_z_arrow_entity_node_->_getWorldAABB());
 
-			// If box not selected
-			if (result.first && !object_selected_)
-			{
-				// make this so it goes throug list of all boxes and selects current box
-				object_entity_node_->showBoundingBox(true);
-			}
-			// If box is selected
-			else 
-			{
-				object_entity_node_->showBoundingBox(false);
-			}
+
 			// Move Arrows
 			if (result_move_x.first && xPressed)
 			{
@@ -379,4 +377,23 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 		}
 	}
 	return true;
+}
+
+void LevelEditor::removeSelectedGameObject()
+{
+	// Check if any object is seleceted
+	if (selected_object_ != nullptr)
+	{
+		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
+		// Destroy the GameObject and remove it from game_object_list_
+		delete selected_object_;
+		game_object_list_.remove(selected_object_);
+		selected_object_ = nullptr;
+		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
+	}
+}
+
+void LevelEditor::duplicateSelectedGameObject()
+{
+
 }
