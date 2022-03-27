@@ -3,7 +3,6 @@
 #include "GameObject.h"
 
 using namespace Ogre;
-using namespace OgreBites;
 
 class ScaleTool
 {

@@ -2,7 +2,6 @@
 #include "pch.h"
 
 using namespace Ogre;
-using namespace OgreBites;
 
 class MoveTool
 {

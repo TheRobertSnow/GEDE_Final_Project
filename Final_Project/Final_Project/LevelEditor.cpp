@@ -77,16 +77,19 @@ void LevelEditor::populateScene()
 	directionalLightNode->setDirection(Ogre::Vector3(0, -1, -1));
 
 	// Add object to scene
-	GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 0, 0), Vector3(0.01, 0.01, 0.01));
+	GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 0, 0), Vector3(0.01, 0.01, 0.01), true, true, 0, 0);
 	game_object_list_.push_back(newObj);
+	GameObject* newObj2 = new GameObject(scene_manager_, "cube.mesh", Vector3(2, 0, 0), Vector3(0.01, 0.01, 0.01), true, true, 0, 0);
+	game_object_list_.push_back(newObj2);
 	// Add object to scene
+	/*
 	Ogre::Vector3 newSpawnPosition = Ogre::Vector3(0, 0, 0);
 	object_entity_ = scene_manager_->createEntity("cube.mesh");
 	object_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
 	object_entity_node_->attachObject(object_entity_);
 	object_entity_node_->setPosition(newSpawnPosition);
 	object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
-	object_entity_->setCastShadows(true);
+	object_entity_->setCastShadows(true);*/
 
 	// move arrows
 	move_x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
