@@ -72,5 +72,4 @@ void ScaleTool::MoveToolToNewEntity(SceneNode* selected_entity)
 	x_arrow_->setPosition(selectedEntityPos.x + 2, selectedEntityPos.y, selectedEntityPos.z);
 	y_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2, selectedEntityPos.z);
 	z_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2);
-	ScaleTool::ShowBoundingBoxes(false, false, false);
 }

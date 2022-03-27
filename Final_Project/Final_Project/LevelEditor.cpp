@@ -105,35 +105,48 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	// Check what keys of the keyboard are being pressed
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
 	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
+
+	// Get Mouse Pos each frame
 	SDL_Point p;
 	SDL_GetMouseState(&p.x, &p.y);
+
 	// Move Button
 	if (xPressed) {
 		if (selected_object_ == nullptr) {
 			xPressed = false;
 		}
 		else {
-			move_tool_->SetVisible(true, true, true);
+			move_tool_->SetVisible(true, true, true); // Show the tool arrows
 		}
 	}
 	else {
-		move_tool_->SetVisible(false, false, false);
+		move_tool_->SetVisible(false, false, false); // Hide the tool arrows
 	}
+
 	// Scale Button
 	if (yPressed) {
 		if (selected_object_ == nullptr) {
 			yPressed = false;
 		}
 		else {
-			scale_tool_->SetVisible(true, true, true);
+			scale_tool_->SetVisible(true, true, true); // Show the tool arrows
 		}
-		if (selected_object_ != nullptr) {
-			// Move Entities
-			move_tool_->MoveSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, move_tool_->GetShowBoundingBox());
-			// Scale Entities
-			scale_tool_->ScaleSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, scale_tool_->GetShowBoundingBox());
-		}
+	}
+	else {
+		scale_tool_->SetVisible(false, false, false); // Hide the tool arrows
+	}
+	if (selected_object_ != nullptr && leftClickPressed) {
+		// Move Entities
+		move_tool_->MoveSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, move_tool_->GetShowBoundingBox());
+		// Move Scale Tool to same location as Move tool
+		scale_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
+		// Scale Entities
+		scale_tool_->ScaleSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, scale_tool_->GetShowBoundingBox());
 		leftClickPressed = false;
+	}
+	mousePos = p;
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
+		leftClickPressed = true;
 	}
 	return true;
 }
@@ -149,29 +162,26 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	{
 		if (xPressed) {
 			xPressed = false;
-			yPressed = false;
-			move_tool_->ShowBoundingBoxes(false, false, false);
 		}
 		else {
 			xPressed = true;
-			yPressed = false;
-			scale_tool_->ShowBoundingBoxes(false, false, false);
 		}
+		yPressed = false;
+		move_tool_->ShowBoundingBoxes(false, false, false);
+		scale_tool_->ShowBoundingBoxes(false, false, false);
 	}
 	// y = 121
 	else if (evt.keysym.sym == 121)
 	{
 		if (yPressed) {
 			yPressed = false;
-			xPressed = false;
-			scale_tool_->ShowBoundingBoxes(false, false, false);
 		}
 		else {
 			yPressed = true;
-			xPressed = false;
-			move_tool_->ShowBoundingBoxes(false, false, false);
-			scale_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
 		}
+		xPressed = false; 
+		move_tool_->ShowBoundingBoxes(false, false, false);
+		scale_tool_->ShowBoundingBoxes(false, false, false);
 	}
 	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
 	{
@@ -218,6 +228,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 						selected_object_ = i;
 						selected_object_->setSelected(true);
 					}
+					// Move all tools to same location as newly selected object
 					move_tool_->MoveToolToNewEntity(i->scene_node_);
 					scale_tool_->MoveToolToNewEntity(i->scene_node_);
 					obj_was_selected = true;
@@ -248,7 +259,6 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					resultScale = mouseRay.intersects(i->scene_node_->_getWorldAABB());
 					if (resultScale.first)
 					{
-						cout << i->axis_;
 						if (i->axis_ == "x") {
 							scale_tool_->ShowBoundingBoxes(true, false, false);
 						}
