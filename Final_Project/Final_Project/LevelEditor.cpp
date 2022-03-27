@@ -85,31 +85,61 @@ void LevelEditor::populateScene()
 	object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
 	object_entity_->setCastShadows(true);
 
-	// axis arrow
-	x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
-	x_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	x_arrow_entity_node_->attachObject(x_arrow_entity_);
-	x_arrow_entity_node_->setPosition(Vector3(2, 0, 0));
-	x_arrow_entity_node_->setScale(Vector3(1, 1, 1));
-	x_arrow_entity_node_->yaw(Ogre::Degree(270));
-	x_arrow_entity_->setCastShadows(false);
+	// move arrows
+	move_x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
+	move_x_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	move_x_arrow_entity_node_->attachObject(move_x_arrow_entity_);
+	move_x_arrow_entity_node_->setPosition(Vector3(2, 0, 0));
+	move_x_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	move_x_arrow_entity_node_->yaw(Ogre::Degree(270));
+	move_x_arrow_entity_->setCastShadows(false);
+	move_x_arrow_entity_node_->setVisible(false);
 
-	y_arrow_entity_ = scene_manager_->createEntity("Y_arrow.mesh");
-	y_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	y_arrow_entity_node_->attachObject(y_arrow_entity_);
-	y_arrow_entity_node_->setPosition(Vector3(0, 2, 0));
-	y_arrow_entity_node_->setScale(Vector3(1, 1, 1));
-	y_arrow_entity_node_->pitch(Ogre::Degree(90));
-	y_arrow_entity_->setCastShadows(false);
+	move_y_arrow_entity_ = scene_manager_->createEntity("Y_arrow.mesh");
+	move_y_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	move_y_arrow_entity_node_->attachObject(move_y_arrow_entity_);
+	move_y_arrow_entity_node_->setPosition(Vector3(0, 2, 0));
+	move_y_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	move_y_arrow_entity_node_->pitch(Ogre::Degree(90));
+	move_y_arrow_entity_->setCastShadows(false);
+	move_y_arrow_entity_node_->setVisible(false);
 
-	z_arrow_entity_ = scene_manager_->createEntity("Z_arrow.mesh");
-	z_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	z_arrow_entity_node_->attachObject(z_arrow_entity_);
-	z_arrow_entity_node_->setPosition(Vector3(0, 0, 2));
-	z_arrow_entity_node_->setScale(Vector3(1, 1, 1));
-	z_arrow_entity_node_->yaw(Ogre::Degree(180));
-	z_arrow_entity_->setCastShadows(false);
+	move_z_arrow_entity_ = scene_manager_->createEntity("Z_arrow.mesh");
+	move_z_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	move_z_arrow_entity_node_->attachObject(move_z_arrow_entity_);
+	move_z_arrow_entity_node_->setPosition(Vector3(0, 0, 2));
+	move_z_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	move_z_arrow_entity_node_->yaw(Ogre::Degree(180));
+	move_z_arrow_entity_->setCastShadows(false);
+	move_z_arrow_entity_node_->setVisible(false);
 
+	// scale arrows
+	scale_x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
+	scale_x_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	scale_x_arrow_entity_node_->attachObject(scale_x_arrow_entity_);
+	scale_x_arrow_entity_node_->setPosition(Vector3(2, 0, 0));
+	scale_x_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	scale_x_arrow_entity_node_->yaw(Ogre::Degree(270));
+	scale_x_arrow_entity_->setCastShadows(false);
+	scale_x_arrow_entity_node_->setVisible(false);
+
+	scale_y_arrow_entity_ = scene_manager_->createEntity("Y_arrow.mesh");
+	scale_y_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	scale_y_arrow_entity_node_->attachObject(scale_y_arrow_entity_);
+	scale_y_arrow_entity_node_->setPosition(Vector3(0, 2, 0));
+	scale_y_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	scale_y_arrow_entity_node_->pitch(Ogre::Degree(90));
+	scale_y_arrow_entity_->setCastShadows(false);
+	scale_y_arrow_entity_node_->setVisible(false);
+
+	scale_z_arrow_entity_ = scene_manager_->createEntity("Z_arrow.mesh");
+	scale_z_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	scale_z_arrow_entity_node_->attachObject(scale_z_arrow_entity_);
+	scale_z_arrow_entity_node_->setPosition(Vector3(0, 0, 2));
+	scale_z_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	scale_z_arrow_entity_node_->yaw(Ogre::Degree(180));
+	scale_z_arrow_entity_->setCastShadows(false);
+	scale_z_arrow_entity_node_->setVisible(false);
 }
 
 bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
@@ -122,54 +152,72 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
 	SDL_Point p;
 	SDL_GetMouseState(&p.x, &p.y);
-	if (xPressed)
-	{
-		object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "x");
-		xPressed = false;
-	}
-	else if (yPressed)
-	{
-		object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "y");
-		yPressed = false;
-	}
-	else if (zPressed)
-	{
-		object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "z");
-		zPressed = false;
-	}
-	else if (gPressed)
-	{
-		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "x");
-		gPressed = false;
-	}
-	else if (hPressed)
-	{
-		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "y");
-		hPressed = false;
-	}
-	else if (jPressed)
-	{
-		object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "z");
-		jPressed = false;
-	}
-	else if (uPressed)
-	{
-		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "x");
-		uPressed = false;
-	}
-	else if (iPressed)
-	{
-		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "y");
-		iPressed = false;
-	}
-	else if (oPressed)
-	{
-		object_controller_->RotateEntity(object_entity_node_, p, mousePos, delta_time, "z");
-		oPressed = false;
+	// Move Button
+	if (xPressed) {
+		move_x_arrow_entity_node_->setVisible(true);
+		move_y_arrow_entity_node_->setVisible(true);
+		move_z_arrow_entity_node_->setVisible(true);
 	}
 	else {
-		mousePos = p;
+		move_x_arrow_entity_node_->setVisible(false);
+		move_y_arrow_entity_node_->setVisible(false);
+		move_z_arrow_entity_node_->setVisible(false);
 	}
+	// Scale Button
+	if (yPressed) {
+		scale_x_arrow_entity_node_->setVisible(true);
+		scale_y_arrow_entity_node_->setVisible(true);
+		scale_z_arrow_entity_node_->setVisible(true);
+	}
+	else {
+		scale_x_arrow_entity_node_->setVisible(false);
+		scale_y_arrow_entity_node_->setVisible(false);
+		scale_z_arrow_entity_node_->setVisible(false);
+	}
+	if (leftClickPressed)
+	{
+		// Move Entities
+		if (move_x_arrow_entity_node_->getShowBoundingBox())
+		{
+			object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "x");
+		}
+		if (move_y_arrow_entity_node_->getShowBoundingBox())
+		{
+			object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "y");
+		}
+		if (move_z_arrow_entity_node_->getShowBoundingBox())
+		{
+			object_controller_->MoveEntity(object_entity_node_, p, mousePos, delta_time, "z");
+		}
+		// Scale Entities
+		if (scale_x_arrow_entity_node_->getShowBoundingBox())
+		{
+			object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "x");
+		}
+		if (scale_y_arrow_entity_node_->getShowBoundingBox())
+		{
+			object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "y");
+		}
+		if (scale_z_arrow_entity_node_->getShowBoundingBox())
+		{
+			object_controller_->ScaleEntity(object_entity_node_, p, mousePos, delta_time, "z");
+		}
+		leftClickPressed = false;
+		//xPressed = false;
+	}
+	mousePos = p;
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
+		leftClickPressed = true;
+	}
+	// Make Arrows Follow Selected Entity
+	Vector3 selectedEntityPos = object_entity_node_->getPosition();
+	Vector3 selectedEntityScale = object_entity_node_->getScale() * 50;
+	move_x_arrow_entity_node_->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
+	move_y_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
+	move_z_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
+	scale_x_arrow_entity_node_->setPosition(selectedEntityPos.x + 2 + selectedEntityScale.x, selectedEntityPos.y, selectedEntityPos.z);
+	scale_y_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2 + selectedEntityScale.y, selectedEntityPos.z);
+	scale_z_arrow_entity_node_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2 + selectedEntityScale.z);
 	return true;
 }
 
@@ -182,73 +230,29 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	// x = 120
 	else if (evt.keysym.sym == 120)
 	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
+		if (xPressed) {
+			xPressed = false;
+			move_x_arrow_entity_node_->showBoundingBox(false);
+			move_y_arrow_entity_node_->showBoundingBox(false);
+			move_z_arrow_entity_node_->showBoundingBox(false);
+		}
+		else {
 			xPressed = true;
+			yPressed = false;
 		}
 	}
 	// y = 121
 	else if (evt.keysym.sym == 121)
 	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
+		if (yPressed) {
+			yPressed = false;
+			scale_x_arrow_entity_node_->showBoundingBox(false);
+			scale_y_arrow_entity_node_->showBoundingBox(false);
+			scale_z_arrow_entity_node_->showBoundingBox(false);
+		}
+		else {
 			yPressed = true;
-		}
-	}
-	// z = 122
-	else if (evt.keysym.sym == 122)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			zPressed = true;
-		}
-	}
-	// g = 103
-	else if (evt.keysym.sym == 103)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			gPressed = true;
-		}
-	}
-	// h = 104
-	else if (evt.keysym.sym == 104)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			hPressed = true;
-		}
-	}
-	// j = 106
-	else if (evt.keysym.sym == 106)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			jPressed = true;
-		}
-	}
-	// u = 117
-	else if (evt.keysym.sym == 117)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			uPressed = true;
-		}
-	}
-	// i = 105
-	else if (evt.keysym.sym == 105)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			iPressed = true;
-		}
-	}
-	// o = 111
-	else if (evt.keysym.sym == 111)
-	{
-		if (object_entity_node_->getShowBoundingBox())
-		{
-			oPressed = true;
+			xPressed = false;
 		}
 	}
 	return true;
@@ -272,13 +276,17 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 			leftClickPressed = true;
 			// Check if ray intersects with box
 			std::pair<bool, Ogre::Real> result = mouseRay.intersects(object_entity_node_->_getWorldAABB());
-			std::pair<bool, Ogre::Real> result_x = mouseRay.intersects(x_arrow_entity_node_->_getWorldAABB());
-			std::pair<bool, Ogre::Real> result_y = mouseRay.intersects(y_arrow_entity_node_->_getWorldAABB());
-			std::pair<bool, Ogre::Real> result_z = mouseRay.intersects(z_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_move_x = mouseRay.intersects(move_x_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_move_y = mouseRay.intersects(move_y_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_move_z = mouseRay.intersects(move_z_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_scale_x = mouseRay.intersects(scale_x_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_scale_y = mouseRay.intersects(scale_y_arrow_entity_node_->_getWorldAABB());
+			std::pair<bool, Ogre::Real> result_scale_z = mouseRay.intersects(scale_z_arrow_entity_node_->_getWorldAABB());
 
 			// If box not selected
 			if (result.first && !object_selected_)
 			{
+				// make this so it goes throug list of all boxes and selects current box
 				object_entity_node_->showBoundingBox(true);
 			}
 			// If box is selected
@@ -286,37 +294,56 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 			{
 				object_entity_node_->showBoundingBox(false);
 			}
-			if (result_x.first) 
+			// Move Arrows
+			if (result_move_x.first && xPressed)
 			{
-				x_arrow_entity_node_->showBoundingBox(true);
+				move_x_arrow_entity_node_->showBoundingBox(true);
 			}
 			else
 			{
-				x_arrow_entity_node_->showBoundingBox(false);
+				move_x_arrow_entity_node_->showBoundingBox(false);
 			}
-			if (result_y.first)
+			if (result_move_y.first && xPressed)
 			{
-				y_arrow_entity_node_->showBoundingBox(true);
+				move_y_arrow_entity_node_->showBoundingBox(true);
 			}
 			else
 			{
-				y_arrow_entity_node_->showBoundingBox(false);
+				move_y_arrow_entity_node_->showBoundingBox(false);
 			}
-			if (result_z.first)
+			if (result_move_z.first && xPressed)
 			{
-				z_arrow_entity_node_->showBoundingBox(true);
+				move_z_arrow_entity_node_->showBoundingBox(true);
 			}
 			else
 			{
-				z_arrow_entity_node_->showBoundingBox(false);
+				move_z_arrow_entity_node_->showBoundingBox(false);
 			}
-		}
-	}
-	else if (evt.type == OgreBites::MOUSEBUTTONUP)
-	{
-		if (evt.button == OgreBites::BUTTON_LEFT)
-		{
-			leftClickPressed = false;
+			// Scale Arrows
+			if (result_scale_x.first && yPressed)
+			{
+				scale_x_arrow_entity_node_->showBoundingBox(true);
+			}
+			else
+			{
+				scale_x_arrow_entity_node_->showBoundingBox(false);
+			}
+			if (result_scale_y.first && yPressed)
+			{
+				scale_y_arrow_entity_node_->showBoundingBox(true);
+			}
+			else
+			{
+				scale_y_arrow_entity_node_->showBoundingBox(false);
+			}
+			if (result_scale_z.first && yPressed)
+			{
+				scale_z_arrow_entity_node_->showBoundingBox(true);
+			}
+			else
+			{
+				scale_z_arrow_entity_node_->showBoundingBox(false);
+			}
 		}
 	}
 	return true;
