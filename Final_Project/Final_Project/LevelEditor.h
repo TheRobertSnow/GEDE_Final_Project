@@ -28,7 +28,7 @@ public:
 	Camera* camera_;
 	RoamingCamera* roaming_camera_;
 	ObjectController* object_controller_;
-	std::list<GameObject*>* game_object_list_;
+	std::list<GameObject*> game_object_list_;
 
 	GameObject* selected_object_;
 

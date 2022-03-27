@@ -77,41 +77,41 @@ void LevelEditor::populateScene()
 	directionalLightNode->setDirection(Ogre::Vector3(0, -1, -1));
 
 	// Add object to scene
-	//GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 0, 0), Vector3(0.01, 0.01, 0.01));
-	//game_object_list_->push_back(newObj);
+	GameObject* newObj = new GameObject(scene_manager_, "cube.mesh", Vector3(0, 0, 0), Vector3(0.01, 0.01, 0.01));
+	game_object_list_.push_back(newObj);
 
-	Ogre::Vector3 newSpawnPosition = Ogre::Vector3(0, 0, 0);
-	object_entity_ = scene_manager_->createEntity("cube.mesh");
-	object_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	object_entity_node_->attachObject(object_entity_);
-	object_entity_node_->setPosition(newSpawnPosition);
-	object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
-	object_entity_->setCastShadows(true);
+	//Ogre::Vector3 newSpawnPosition = Ogre::Vector3(0, 0, 0);
+	//object_entity_ = scene_manager_->createEntity("cube.mesh");
+	//object_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	//object_entity_node_->attachObject(object_entity_);
+	//object_entity_node_->setPosition(newSpawnPosition);
+	//object_entity_node_->setScale(Vector3(0.01, 0.01, 0.01));
+	//object_entity_->setCastShadows(true);
 
-	// axis arrow
-	x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
-	x_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	x_arrow_entity_node_->attachObject(x_arrow_entity_);
-	x_arrow_entity_node_->setPosition(Vector3(2, 0, 0));
-	x_arrow_entity_node_->setScale(Vector3(1, 1, 1));
-	x_arrow_entity_node_->yaw(Ogre::Degree(270));
-	x_arrow_entity_->setCastShadows(false);
+	//// axis arrow
+	//x_arrow_entity_ = scene_manager_->createEntity("X_arrow.mesh");
+	//x_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	//x_arrow_entity_node_->attachObject(x_arrow_entity_);
+	//x_arrow_entity_node_->setPosition(Vector3(2, 0, 0));
+	//x_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	//x_arrow_entity_node_->yaw(Ogre::Degree(270));
+	//x_arrow_entity_->setCastShadows(false);
 
-	y_arrow_entity_ = scene_manager_->createEntity("Y_arrow.mesh");
-	y_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	y_arrow_entity_node_->attachObject(y_arrow_entity_);
-	y_arrow_entity_node_->setPosition(Vector3(0, 2, 0));
-	y_arrow_entity_node_->setScale(Vector3(1, 1, 1));
-	y_arrow_entity_node_->pitch(Ogre::Degree(90));
-	y_arrow_entity_->setCastShadows(false);
+	//y_arrow_entity_ = scene_manager_->createEntity("Y_arrow.mesh");
+	//y_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	//y_arrow_entity_node_->attachObject(y_arrow_entity_);
+	//y_arrow_entity_node_->setPosition(Vector3(0, 2, 0));
+	//y_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	//y_arrow_entity_node_->pitch(Ogre::Degree(90));
+	//y_arrow_entity_->setCastShadows(false);
 
-	z_arrow_entity_ = scene_manager_->createEntity("Z_arrow.mesh");
-	z_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
-	z_arrow_entity_node_->attachObject(z_arrow_entity_);
-	z_arrow_entity_node_->setPosition(Vector3(0, 0, 2));
-	z_arrow_entity_node_->setScale(Vector3(1, 1, 1));
-	z_arrow_entity_node_->yaw(Ogre::Degree(180));
-	z_arrow_entity_->setCastShadows(false);
+	//z_arrow_entity_ = scene_manager_->createEntity("Z_arrow.mesh");
+	//z_arrow_entity_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	//z_arrow_entity_node_->attachObject(z_arrow_entity_);
+	//z_arrow_entity_node_->setPosition(Vector3(0, 0, 2));
+	//z_arrow_entity_node_->setScale(Vector3(1, 1, 1));
+	//z_arrow_entity_node_->yaw(Ogre::Degree(180));
+	//z_arrow_entity_->setCastShadows(false);
 
 }
 
