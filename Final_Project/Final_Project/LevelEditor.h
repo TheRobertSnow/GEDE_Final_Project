@@ -5,6 +5,8 @@
 #include "GameObject.h"
 #include "MoveTool.h"
 #include "ScaleTool.h"
+#include "ObjectController.h"
+#include "InputManager.h"
 #include "RotateTool.h"
 
 using namespace Ogre;
@@ -21,6 +23,8 @@ public:
 	void populateScene();
 	void removeSelectedGameObject();
 	void duplicateSelectedGameObject();
+	void resetTools();
+	void setupInputManager();
 
 	bool frameStarted(const Ogre::FrameEvent &evt);
 	bool keyPressed(const OgreBites::KeyboardEvent& evt);
@@ -28,6 +32,7 @@ public:
 
 	Root* root_;
 	SceneManager* scene_manager_;
+	InputManager* input_manager_;
 	SceneNode* camera_node_;
 	Camera* camera_;
 	RoamingCamera* roaming_camera_;
@@ -48,4 +53,5 @@ public:
 	bool xPressed = false;
 	bool yPressed = false;
 	bool zPressed = false;
+	bool d_pressed_ = false;
 };

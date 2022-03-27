@@ -18,6 +18,12 @@ void LevelEditor::setup()
 	setupSceneManager();
 	setupCamera();
 	populateScene();
+	setupInputManager();
+}
+
+void LevelEditor::setupInputManager() 
+{
+	input_manager_ = new InputManager();
 }
 
 void LevelEditor::setupSceneManager()
@@ -114,11 +120,31 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	const Ogre::Real delta_time = evt.timeSinceLastFrame;
 	// Check what keys of the keyboard are being pressed
 	const Uint8* state = SDL_GetKeyboardState(nullptr);
-	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
-
 	// Get Mouse Pos each frame
 	SDL_Point p;
-	SDL_GetMouseState(&p.x, &p.y);
+	const Uint32 mouse_state = SDL_GetMouseState(&p.x, &p.y);
+
+	// Manage new input in input manager
+	input_manager_->update(state, &mouse_state);
+
+	if (state[SDL_SCANCODE_LCTRL])
+	{
+		if (state[SDL_SCANCODE_D])
+		{
+			if (!d_pressed_)
+			{
+				d_pressed_ = true;
+				if (selected_object_ != nullptr) duplicateSelectedGameObject();
+			}
+		}
+		else
+		{
+			d_pressed_ = false;
+		}
+	}
+	// update the roaming camera
+	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
+
 
 	// Move Button
 	if (xPressed) {
@@ -217,7 +243,6 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	// z = 122
 	else if (evt.keysym.sym == 122)
 	{
-		cout << evt.keysym.sym;
 		if (zPressed) {
 			zPressed = false;
 		}
@@ -233,9 +258,6 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
 	{
 		removeSelectedGameObject();
-	}
-	else {
-		cout << evt.keysym.sym;
 	}
 	return true;
 }
@@ -357,10 +379,43 @@ void LevelEditor::removeSelectedGameObject()
 		game_object_list_.remove(selected_object_);
 		selected_object_ = nullptr;
 		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
+		// Reset the tools
+		LevelEditor::resetTools();
 	}
 }
 
 void LevelEditor::duplicateSelectedGameObject()
 {
+	GameObject* duplicateOfObject = new GameObject(selected_object_);
+	// Set the duplicate as the selected object
+	selected_object_->setSelected(false);
+	selected_object_ = duplicateOfObject;
+	selected_object_->setSelected(true);
 
+	// Move all tools to same location as new duplicate object
+	move_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
+	scale_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
+	rotate_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
+	game_object_list_.push_back(duplicateOfObject);
+
+	// Change active tool to move tool because we can assume the creator wants to move the duplicated object
+	xPressed = true;
+	yPressed = false;
+	zPressed = false;
+	move_tool_->ShowBoundingBoxes(false, false, false);
+	scale_tool_->ShowBoundingBoxes(false, false, false);
+	rotate_tool_->ShowBoundingBoxes(false, false, false);
+}
+
+void LevelEditor::resetTools()
+{
+	xPressed = false;
+	move_tool_->SetVisible(false, false, false);
+	move_tool_->ShowBoundingBoxes(false, false, false);
+	yPressed = false;
+	scale_tool_->SetVisible(false, false, false);
+	scale_tool_->ShowBoundingBoxes(false, false, false);
+	zPressed = false;
+	rotate_tool_->SetVisible(false, false, false);
+	rotate_tool_->ShowBoundingBoxes(false, false, false);
 }
