@@ -2,6 +2,7 @@
 #include "LevelEditor.h"
 # include "MoveTool.h"
 # include "ScaleTool.h"
+# include "RotateTool.h"
 
 using namespace std;
 
@@ -100,6 +101,15 @@ void LevelEditor::populateScene()
 	GameObject* scalez = new GameObject(scene_manager_, "Z_arrow.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 180, 0, "z");
 	scale_tool_list_.push_back(scalez);
 	scale_tool_ = new ScaleTool(scalex->scene_node_, scaley->scene_node_, scalez->scene_node_);
+
+	// Rotate Tool Arrows
+	GameObject* rotatex = new GameObject(scene_manager_, "X_sphere.mesh", Vector3(2, 0, 0), Vector3(1, 1, 1), false, false, 0, 0, "x");
+	rotate_tool_list_.push_back(rotatex);
+	GameObject* rotatey = new GameObject(scene_manager_, "Y_sphere.mesh", Vector3(0, 2, 0), Vector3(1, 1, 1), false, false, 0, 0, "y");
+	rotate_tool_list_.push_back(rotatey);
+	GameObject* rotatez = new GameObject(scene_manager_, "Z_sphere.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 0, 0, "z");
+	rotate_tool_list_.push_back(rotatez);
+	rotate_tool_ = new RotateTool(rotatex->scene_node_, rotatey->scene_node_, rotatez->scene_node_);
 }
 
 
@@ -161,6 +171,19 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	else {
 		scale_tool_->SetVisible(false, false, false); // Hide the tool arrows
 	}
+
+	// Rotate Button
+	if (zPressed) {
+		if (selected_object_ == nullptr) {
+			zPressed = false;
+		}
+		else {
+			rotate_tool_->SetVisible(true, true, true); // Show the tool arrows
+		}
+	}
+	else {
+		rotate_tool_->SetVisible(false, false, false); // Hide the tool arrows
+	}
 	if (selected_object_ != nullptr && leftClickPressed) {
 		// Move Entities
 		move_tool_->MoveSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, move_tool_->GetShowBoundingBox());
@@ -168,6 +191,10 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		scale_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
 		// Scale Entities
 		scale_tool_->ScaleSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, scale_tool_->GetShowBoundingBox());
+		// Move Rotate Tool to same location as Move tool
+		rotate_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
+		// Rotate Entities
+		rotate_tool_->RotateSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, rotate_tool_->GetShowBoundingBox());
 		leftClickPressed = false;
 	}
 	mousePos = p;
@@ -193,8 +220,10 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 			xPressed = true;
 		}
 		yPressed = false;
+		zPressed = false;
 		move_tool_->ShowBoundingBoxes(false, false, false);
 		scale_tool_->ShowBoundingBoxes(false, false, false);
+		rotate_tool_->ShowBoundingBoxes(false, false, false);
 	}
 	// y = 121
 	else if (evt.keysym.sym == 121)
@@ -206,26 +235,30 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 			yPressed = true;
 		}
 		xPressed = false; 
+		zPressed = false;
 		move_tool_->ShowBoundingBoxes(false, false, false);
 		scale_tool_->ShowBoundingBoxes(false, false, false);
+		rotate_tool_->ShowBoundingBoxes(false, false, false);
+	}
+	// z = 122
+	else if (evt.keysym.sym == 122)
+	{
+		if (zPressed) {
+			zPressed = false;
+		}
+		else {
+			zPressed = true;
+		}
+		xPressed = false;
+		yPressed = false;
+		move_tool_->ShowBoundingBoxes(false, false, false);
+		scale_tool_->ShowBoundingBoxes(false, false, false);
+		rotate_tool_->ShowBoundingBoxes(false, false, false);
 	}
 	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
 	{
 		removeSelectedGameObject();
 	}
-	/*else if (evt.keysym.sym == SDLK_LCTRL)
-	{
-		std::cout << "L_CTRL" << std::endl;
-		if (d_pressed_)
-		{
-			duplicateSelectedGameObject();
-		}
-	}
-	else if (evt.keysym.sym == SDLK_d)
-	{
-		std::cout << "Cum" << std::endl;
-		d_pressed_ = true;
-	}*/
 	return true;
 }
 
@@ -270,6 +303,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					// Move all tools to same location as newly selected object
 					move_tool_->MoveToolToNewEntity(i->scene_node_);
 					scale_tool_->MoveToolToNewEntity(i->scene_node_);
+					rotate_tool_->MoveToolToNewEntity(i->scene_node_);
 					obj_was_selected = true;
 					cout << "selected_object_: " << selected_object_ << endl << "list item: " << i << endl;
 				}
@@ -310,6 +344,24 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
+			if (zPressed) {
+				std::pair<bool, Ogre::Real> resultRotate;
+				for (auto const& i : rotate_tool_list_) {
+					resultRotate = mouseRay.intersects(i->scene_node_->_getWorldAABB());
+					if (resultRotate.first)
+					{
+						if (i->axis_ == "x") {
+							rotate_tool_->ShowBoundingBoxes(true, false, false);
+						}
+						else if (i->axis_ == "y") {
+							rotate_tool_->ShowBoundingBoxes(false, true, false);
+						}
+						else if (i->axis_ == "z") {
+							rotate_tool_->ShowBoundingBoxes(false, false, true);
+						}
+					}
+				}
+			}
 			leftClickPressed = true;
 		}
 	}
@@ -327,10 +379,43 @@ void LevelEditor::removeSelectedGameObject()
 		game_object_list_.remove(selected_object_);
 		selected_object_ = nullptr;
 		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
+		// Reset the tools
+		LevelEditor::resetTools();
 	}
 }
 
 void LevelEditor::duplicateSelectedGameObject()
 {
-	game_object_list_.push_back(new GameObject(selected_object_));
+	GameObject* duplicateOfObject = new GameObject(selected_object_);
+	// Set the duplicate as the selected object
+	selected_object_->setSelected(false);
+	selected_object_ = duplicateOfObject;
+	selected_object_->setSelected(true);
+
+	// Move all tools to same location as new duplicate object
+	move_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
+	scale_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
+	rotate_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
+	game_object_list_.push_back(duplicateOfObject);
+
+	// Change active tool to move tool because we can assume the creator wants to move the duplicated object
+	xPressed = true;
+	yPressed = false;
+	zPressed = false;
+	move_tool_->ShowBoundingBoxes(false, false, false);
+	scale_tool_->ShowBoundingBoxes(false, false, false);
+	rotate_tool_->ShowBoundingBoxes(false, false, false);
+}
+
+void LevelEditor::resetTools()
+{
+	xPressed = false;
+	move_tool_->SetVisible(false, false, false);
+	move_tool_->ShowBoundingBoxes(false, false, false);
+	yPressed = false;
+	scale_tool_->SetVisible(false, false, false);
+	scale_tool_->ShowBoundingBoxes(false, false, false);
+	zPressed = false;
+	rotate_tool_->SetVisible(false, false, false);
+	rotate_tool_->ShowBoundingBoxes(false, false, false);
 }
