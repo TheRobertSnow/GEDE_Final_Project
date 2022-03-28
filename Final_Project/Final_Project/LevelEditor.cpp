@@ -127,8 +127,12 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	// Manage new input in input manager
 	input_manager_->update(state, &mouse_state);
 
+	std::cout << action_type << std::endl;
+
+	// Keyboard stuff
 	if (state[SDL_SCANCODE_LCTRL])
 	{
+		l_ctrl_pressed_ = true;
 		if (state[SDL_SCANCODE_D])
 		{
 			if (!d_pressed_)
@@ -141,7 +145,24 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		{
 			d_pressed_ = false;
 		}
+		if (state[SDL_SCANCODE_Z])
+		{
+			if (!z_pressed_)
+			{
+				z_pressed_ = true;
+				if (action_queue.size() > 0) undoLastAction();
+			}
+		}
+		else
+		{
+			z_pressed_ = false;
+		}
 	}
+	else {
+		l_ctrl_pressed_ = false;
+	}
+
+	// Mouse stuff
 	if (left_click_up) left_click_up = false;
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
 		if (!leftClickPressed) {
@@ -170,6 +191,11 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		}
 		else {
 			move_tool_->SetVisible(true, true, true); // Show the tool arrows
+			if (left_click_down) {
+				std::cout << "recording action" << selected_object_->scene_node_->getPosition() << std::endl;
+				last_vec = selected_object_->scene_node_->getPosition();
+				action_type = LE_Type::MOVE;
+			}
 		}
 	}
 	else {
@@ -183,6 +209,10 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		}
 		else {
 			scale_tool_->SetVisible(true, true, true); // Show the tool arrows
+			if (left_click_down) {
+				last_vec = selected_object_->scene_node_->getScale();
+				action_type = LE_Type::SCALE;
+			}
 		}
 	}
 	else {
@@ -196,15 +226,16 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		}
 		else {
 			rotate_tool_->SetVisible(true, true, true); // Show the tool arrows
+			if (left_click_down) {
+				last_rot = selected_object_->scene_node_->getOrientation();
+				action_type = LE_Type::ROTATE;
+			}
 		}
 	}
 	else {
 		rotate_tool_->SetVisible(false, false, false); // Hide the tool arrows
 	}
 	if (selected_object_ != nullptr && leftClickPressed) {
-		if (left_click_down) {
-			// TODO: Save state of object
-		}
 		// Move Entities
 		move_tool_->MoveSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, move_tool_->GetShowBoundingBox());
 		// Move Scale Tool to same location as Move tool
@@ -217,7 +248,21 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		rotate_tool_->RotateSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, rotate_tool_->GetShowBoundingBox());
 	}
 	else if (left_click_up) {
-		// TODO: Add event to deque
+		std::cout << "Creating action" << std::endl;
+		if (action_type == LE_Type::MOVE)
+		{
+			action_queue.push_back(new LE_Event(last_vec, selected_object_->scene_node_->getPosition(), action_type));
+			std::cout << action_queue.back()->old_vec_ << std::endl;
+		}
+		else if (action_type == LE_Type::ROTATE)
+		{
+			action_queue.push_back(new LE_Event(last_rot, selected_object_->scene_node_->getOrientation(), action_type));
+		}
+		else if (action_type == LE_Type::SCALE)
+		{
+			action_queue.push_back(new LE_Event(last_vec, selected_object_->scene_node_->getScale(), action_type));
+		}
+		action_type = LE_Type::STATIC;
 	}
 	mousePos = p;
 	return true;
@@ -262,17 +307,20 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	// z = 122
 	else if (evt.keysym.sym == 122)
 	{
-		if (zPressed) {
-			zPressed = false;
+		if (!l_ctrl_pressed_)
+		{
+			if (zPressed) {
+				zPressed = false;
+			}
+			else {
+				zPressed = true;
+			}
+			xPressed = false;
+			yPressed = false;
+			move_tool_->ShowBoundingBoxes(false, false, false);
+			scale_tool_->ShowBoundingBoxes(false, false, false);
+			rotate_tool_->ShowBoundingBoxes(false, false, false);
 		}
-		else {
-			zPressed = true;
-		}
-		xPressed = false;
-		yPressed = false;
-		move_tool_->ShowBoundingBoxes(false, false, false);
-		scale_tool_->ShowBoundingBoxes(false, false, false);
-		rotate_tool_->ShowBoundingBoxes(false, false, false);
 	}
 	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
 	{
@@ -391,6 +439,8 @@ void LevelEditor::removeSelectedGameObject()
 	// Check if any object is seleceted
 	if (selected_object_ != nullptr)
 	{
+		// Start by creating an action event
+
 		std::cout << "Size of list: " << game_object_list_.size() << std::endl;
 		// Destroy the GameObject and remove it from game_object_list_
 		delete selected_object_;
@@ -436,4 +486,40 @@ void LevelEditor::resetTools()
 	zPressed = false;
 	rotate_tool_->SetVisible(false, false, false);
 	rotate_tool_->ShowBoundingBoxes(false, false, false);
+}
+
+void LevelEditor::moveTools()
+{
+	if (selected_object_ != nullptr)
+	{
+		move_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
+		scale_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
+		rotate_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
+	}
+}
+
+void LevelEditor::undoLastAction()
+{
+	std::cout << "Undo last action" << std::endl;
+	LE_Event* action = action_queue.back();
+	std::cout << action->old_vec_ << std::endl;
+	std::cout << action->new_vec_ << std::endl;
+	switch (action->type_)
+	{
+	case LE_Type::MOVE:
+		selected_object_->scene_node_->setPosition(action->old_vec_);
+		moveTools();
+		break;
+	case LE_Type::SCALE:
+		selected_object_->scene_node_->setScale(action->old_vec_);
+		break;
+	case LE_Type::ROTATE:
+		selected_object_->scene_node_->setOrientation(action->old_rot_);
+		break;
+	case LE_Type::DELETE:
+		break;
+	default:
+		break;
+	}
+	action_queue.pop_back();
 }

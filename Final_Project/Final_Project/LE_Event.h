@@ -3,12 +3,13 @@
 using namespace Ogre;
 using namespace OgreBites;
 
-enum class LE_Type
+enum LE_Type
 {
 	MOVE,
 	SCALE,
 	ROTATE,
 	DELETE,
+	STATIC,
 };
 
 class LE_Event
@@ -19,7 +20,7 @@ public:
 	// Rotate constructor
 	LE_Event(Ogre::Quaternion old_rot, Ogre::Quaternion new_rot, LE_Type type);
 
-	LE_Type type_;
+	enum LE_Type type_;
 	Ogre::Vector3 old_vec_;
 	Ogre::Vector3 new_vec_;
 	Ogre::Quaternion old_rot_;
