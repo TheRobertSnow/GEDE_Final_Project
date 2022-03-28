@@ -281,16 +281,16 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		std::cout << "Creating action" << std::endl;
 		if (action_type == LE_Type::MOVE)
 		{
-			action_queue.push_back(new LE_Event(last_vec, selected_object_->scene_node_->getPosition(), action_type));
+			action_queue.push_back(new LE_Event(selected_object_,last_vec, selected_object_->scene_node_->getPosition(), action_type));
 			std::cout << action_queue.back()->old_vec_ << std::endl;
 		}
 		else if (action_type == LE_Type::ROTATE)
 		{
-			action_queue.push_back(new LE_Event(last_rot, selected_object_->scene_node_->getOrientation(), action_type));
+			action_queue.push_back(new LE_Event(selected_object_,last_rot, selected_object_->scene_node_->getOrientation(), action_type));
 		}
 		else if (action_type == LE_Type::SCALE)
 		{
-			action_queue.push_back(new LE_Event(last_vec, selected_object_->scene_node_->getScale(), action_type));
+			action_queue.push_back(new LE_Event(selected_object_, last_vec, selected_object_->scene_node_->getScale(), action_type));
 		}
 		action_type = LE_Type::STATIC;
 	}
@@ -574,16 +574,16 @@ void LevelEditor::undoLastAction()
 	switch (action->type_)
 	{
 	case LE_Type::MOVE:
-		selected_object_->scene_node_->setPosition(action->old_vec_);
+		action->game_object_->scene_node_->setPosition(action->old_vec_);
 		action_queue.pop_back();
 		moveTools();
 		break;
 	case LE_Type::SCALE:
-		selected_object_->scene_node_->setScale(action->old_vec_);
+		action->game_object_->scene_node_->setScale(action->old_vec_);
 		action_queue.pop_back();
 		break;
 	case LE_Type::ROTATE:
-		selected_object_->scene_node_->setOrientation(action->old_rot_);
+		action->game_object_->scene_node_->setOrientation(action->old_rot_);
 		action_queue.pop_back();
 		break;
 	case LE_Type::DUPLICATE:

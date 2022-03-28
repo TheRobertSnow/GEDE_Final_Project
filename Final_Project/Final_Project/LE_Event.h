@@ -18,9 +18,9 @@ class LE_Event
 {
 public:
 	// Move and Scale constructor
-	LE_Event(Ogre::Vector3 old_vec, Ogre::Vector3 new_vec, LE_Type type);
+	LE_Event(GameObject* game_obj, Ogre::Vector3 old_vec, Ogre::Vector3 new_vec, LE_Type type);
 	// Rotate constructor
-	LE_Event(Ogre::Quaternion old_rot, Ogre::Quaternion new_rot, LE_Type type);
+	LE_Event(GameObject* game_obj, Ogre::Quaternion old_rot, Ogre::Quaternion new_rot, LE_Type type);
 	// Delete and Duplicate constructor
 	LE_Event(GameObject* src, LE_Type type);
 
