@@ -46,21 +46,12 @@ void ScaleTool::ScaleSelectedEntity(SceneNode* selected_entity, SDL_Point new_po
 		Vector3 currentScale = selected_entity->getScale();
 		if (axis == "x") {
 			currentScale.x += (moveX * delta_time) / 5;
-			if (currentScale.x < 0) {
-				currentScale.x = 0;
-			}
 		}
 		else if (axis == "y") {
 			currentScale.y += (moveY * delta_time) / 5;
-			if (currentScale.y < 0) {
-				currentScale.y = 0;
-			}
 		}
 		else if (axis == "z") {
 			currentScale.z += (moveZ * delta_time) / 5;
-			if (currentScale.z < 0) {
-				currentScale.z = 0;
-			}
 		}
 		selected_entity->setScale(currentScale);
 	}

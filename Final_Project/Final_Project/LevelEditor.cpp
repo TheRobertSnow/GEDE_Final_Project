@@ -110,6 +110,7 @@ void LevelEditor::populateScene()
 	GameObject* rotatez = new GameObject(scene_manager_, "Z_sphere.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 0, 0, "z");
 	rotate_tool_list_.push_back(rotatez);
 	rotate_tool_ = new RotateTool(rotatex->scene_node_, rotatey->scene_node_, rotatez->scene_node_);
+
 }
 
 
