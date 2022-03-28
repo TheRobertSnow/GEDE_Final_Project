@@ -275,6 +275,7 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	// s = 115
 	else if (evt.keysym.sym == 115)
 	{
+		// Add check if !rightclickpressed
 		if (sPressed) {
 			sPressed = false;
 		}
@@ -423,15 +424,6 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
-			/*if (!obj_was_selected)
-			{
-
-				if (selected_object_ != nullptr)
-				{
-					selected_object_->setSelected(false);
-					selected_object_ = nullptr;
-				}
-			}*/
 			if (!obj_was_selected) {
 				if (selected_object_ != nullptr)
 				{
@@ -479,11 +471,13 @@ void LevelEditor::removeSelectedGameObject()
 
 void LevelEditor::duplicateSelectedGameObject()
 {
+	// Duplicate Duplicates does not work
+
 	GameObject* duplicateOfObject = new GameObject(selected_object_);
 	// Set the duplicate as the selected object
 	selected_object_->setSelected(false);
 	selected_object_ = duplicateOfObject;
-	selected_object_->setSelected(true);
+	//selected_object_->setSelected(true);
 
 	// Move all tools to same location as new duplicate object
 	move_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
@@ -498,6 +492,9 @@ void LevelEditor::duplicateSelectedGameObject()
 	move_tool_->ShowBoundingBoxes(false, false, false);
 	scale_tool_->ShowBoundingBoxes(false, false, false);
 	rotate_tool_->ShowBoundingBoxes(false, false, false);
+
+	// Set vis of new sceneNode to true
+	selected_object_->scene_node_->setVisible(true);
 }
 
 void LevelEditor::resetTools()

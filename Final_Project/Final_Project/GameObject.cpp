@@ -19,7 +19,6 @@ GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 	scene_node_->pitch(Ogre::Degree(pitchAngle));
 	axis_ = axis;
 	visible_ = visible;
-
 }
 
 // Duplication constructor
@@ -32,6 +31,7 @@ GameObject::GameObject(GameObject* src)
 	scene_node_->attachObject(entity_);
 	scene_node_->setPosition(src->scene_node_->getPosition());
 	scene_node_->setScale(src->scene_node_->getScale());
+	entity_->setCastShadows(entity_->getCastShadows());
 	scene_node_->setVisible(src->visible_);
 	scene_node_->setOrientation(src->scene_node_->getOrientation());
 	axis_ = src->axis_;
