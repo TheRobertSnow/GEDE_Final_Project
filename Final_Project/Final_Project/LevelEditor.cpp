@@ -183,7 +183,9 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 			if (!d_pressed_)
 			{
 				d_pressed_ = true;
+				action_type = DUPLICATE;
 				if (selected_object_ != nullptr) duplicateSelectedGameObject();
+				action_type = STATIC;
 			}
 		}
 		else
@@ -535,13 +537,14 @@ void LevelEditor::removeSelectedGameObject()
 
 void LevelEditor::duplicateSelectedGameObject()
 {
-	// Duplicate Duplicates does not work
-
 	GameObject* duplicateOfObject = new GameObject(selected_object_);
 	// Set the duplicate as the selected object
 	selected_object_->setSelected(false);
 	selected_object_ = duplicateOfObject;
 	//selected_object_->setSelected(true);
+	// Create action event
+	action_queue.push_back(new LE_Event(duplicateOfObject, action_type));
+	std::cout << action_queue.size() << endl;
 
 	// Move all tools to same location as new duplicate object
 	move_tool_->MoveToolToNewEntity(duplicateOfObject->scene_node_);
@@ -602,6 +605,17 @@ void LevelEditor::undoLastAction()
 		break;
 	case LE_Type::ROTATE:
 		selected_object_->scene_node_->setOrientation(action->old_rot_);
+		action_queue.pop_back();
+		break;
+	case LE_Type::DUPLICATE:
+		GameObject* ptr;
+		ptr = action->game_object_;
+		std::cout << "Cringe" << std::endl;
+		game_object_list_.remove(action->game_object_);
+		delete action->game_object_;
+		if (action->game_object_ == selected_object_) {
+			selected_object_ = nullptr;
+		}
 		action_queue.pop_back();
 		break;
 	case LE_Type::DELETE:

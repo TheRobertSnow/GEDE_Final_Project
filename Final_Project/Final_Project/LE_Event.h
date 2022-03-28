@@ -10,6 +10,7 @@ enum LE_Type
 	SCALE,
 	ROTATE,
 	DELETE,
+	DUPLICATE,
 	STATIC,
 };
 
@@ -20,7 +21,7 @@ public:
 	LE_Event(Ogre::Vector3 old_vec, Ogre::Vector3 new_vec, LE_Type type);
 	// Rotate constructor
 	LE_Event(Ogre::Quaternion old_rot, Ogre::Quaternion new_rot, LE_Type type);
-	// Delete constructor
+	// Delete and Duplicate constructor
 	LE_Event(GameObject* src, LE_Type type);
 
 	enum LE_Type type_;
@@ -32,5 +33,6 @@ public:
 	Ogre::String mesh_file_name_;
 	String axis_;
 	bool is_visible_;
+	GameObject* game_object_;
 };
 
