@@ -357,6 +357,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					obj_was_selected = true;
 				}
 			}
+			int move_arrows_clicked_count = 3;
 			if (mPressed) {
 				std::pair<bool, Ogre::Real> resultMove;
 				for (auto const& i : move_tool_list_) {
@@ -373,8 +374,12 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 							move_tool_->ShowBoundingBoxes(false, false, true);
 						}
 					}
+					else {
+						move_arrows_clicked_count -= 1;
+					}
 				}
 			}
+			int scale_arrows_clicked_count = 3;
 			if (sPressed) {
 				std::pair<bool, Ogre::Real> resultScale;
 				for (auto const& i : scale_tool_list_) {
@@ -391,8 +396,12 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 							scale_tool_->ShowBoundingBoxes(false, false, true);
 						}
 					}
+					else {
+						scale_arrows_clicked_count -= 1;
+					}
 				}
 			}
+			int rotate_arrows_clicked_count = 3;
 			if (rPressed) {
 				std::pair<bool, Ogre::Real> resultRotate;
 				for (auto const& i : rotate_tool_list_) {
@@ -409,13 +418,44 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 							rotate_tool_->ShowBoundingBoxes(false, false, true);
 						}
 					}
+					else {
+						rotate_arrows_clicked_count -= 1;
+					}
 				}
 			}
+			/*if (!obj_was_selected)
+			{
+
+				if (selected_object_ != nullptr)
+				{
+					selected_object_->setSelected(false);
+					selected_object_ = nullptr;
+				}
+			}*/
 			if (!obj_was_selected) {
-				// Check if two of these are true then some arrow is clicked
-				//&& move_tool_->GetShowBoundingBox() == "" && scale_tool_->GetShowBoundingBox() == "" && rotate_tool_->GetShowBoundingBox() == ""
-				cout << "Click outside box when no tool selected";
+				if (selected_object_ != nullptr)
+				{
+					// Check if two of these are true then some arrow is clicked
+					if (move_tool_->GetShowBoundingBox() != "" || scale_tool_->GetShowBoundingBox() != "" || rotate_tool_->GetShowBoundingBox() != "") {
+						if (move_arrows_clicked_count == 0 || scale_arrows_clicked_count == 0 || rotate_arrows_clicked_count == 0) {
+							cout << "Click outside box and arrow when arrow selected";
+							// Turn off tool and deselect box
+							LevelEditor::resetTools();
+							selected_object_->setSelected(false);
+							selected_object_ = nullptr;
+						}
+					}
+					else {
+						cout << "Click outside box when no tool selected";
+						// deselect box
+						selected_object_->setSelected(false);
+						selected_object_ = nullptr;
+					}
+				}
 			}
+		}
+		else {
+			rightClickPressed = true;
 		}
 	}
 	return true;
