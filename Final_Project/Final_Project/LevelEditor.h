@@ -54,6 +54,7 @@ public:
 	bool object_selected_ = false;
 	SDL_Point mousePos;
 	bool leftClickPressed = false;
+	bool rightClickPressed = false;
 	bool mPressed = false;
 	bool sPressed = false;
 	bool rPressed = false;
