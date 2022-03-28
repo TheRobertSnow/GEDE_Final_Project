@@ -20,11 +20,11 @@ LE_Event::LE_Event(GameObject* src, LE_Type type)
 {
 	switch (type)
 	{
-	case DELETE:
+	case DUPLICATE:
 		type_ = type;
 		game_object_ = src;
 		break;
-	case DUPLICATE:
+	case DELETE:
 		std::cout << "creating action event" << std::endl;
 		is_selected_ = src->is_selected_;
 		mesh_file_name_ = src->entity_->getMesh()->getName();

@@ -22,7 +22,6 @@ public:
 	void setupSceneManager();
 	void setupCamera();
 	void populateScene();
-	void overlayShit();
 	void removeSelectedGameObject();
 	void duplicateSelectedGameObject();
 	void resetTools();
@@ -55,6 +54,8 @@ public:
 	SDL_Point mousePos;
 	bool leftClickPressed = false;
 	bool rightClickPressed = false;
+	bool right_click_down = false;
+	bool right_click_up = false;
 	bool mPressed = false;
 	bool sPressed = false;
 	bool rPressed = false;
