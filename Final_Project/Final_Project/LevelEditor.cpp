@@ -142,6 +142,23 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 			d_pressed_ = false;
 		}
 	}
+	if (left_click_up) left_click_up = false;
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
+		if (!leftClickPressed) {
+			left_click_down = true;
+			leftClickPressed = true;
+		}
+		else {
+			left_click_down = false;
+		}
+	}
+	else {
+		if (leftClickPressed) {
+			left_click_up = true;
+			leftClickPressed = false;
+		}
+	}
+
 	// update the roaming camera
 	if (roaming_camera_ != nullptr) roaming_camera_->update(delta_time, state);
 
@@ -185,6 +202,9 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		rotate_tool_->SetVisible(false, false, false); // Hide the tool arrows
 	}
 	if (selected_object_ != nullptr && leftClickPressed) {
+		if (left_click_down) {
+			// TODO: Save state of object
+		}
 		// Move Entities
 		move_tool_->MoveSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, move_tool_->GetShowBoundingBox());
 		// Move Scale Tool to same location as Move tool
@@ -195,12 +215,11 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		rotate_tool_->MoveToolToNewEntity(selected_object_->scene_node_);
 		// Rotate Entities
 		rotate_tool_->RotateSelectedEntity(selected_object_->scene_node_, p, mousePos, delta_time, rotate_tool_->GetShowBoundingBox());
-		leftClickPressed = false;
+	}
+	else if (left_click_up) {
+		// TODO: Add event to deque
 	}
 	mousePos = p;
-	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
-		leftClickPressed = true;
-	}
 	return true;
 }
 
@@ -362,7 +381,6 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
-			leftClickPressed = true;
 		}
 	}
 	return true;

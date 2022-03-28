@@ -55,4 +55,10 @@ public:
 	bool yPressed = false;
 	bool zPressed = false;
 	bool d_pressed_ = false;
+
+	// Undo stuff
+	bool left_click_down = false;
+	bool left_click_up = false;
+	Ogre::Vector3 last_vec;
+	Ogre::Quaternion last_rot;
 };
