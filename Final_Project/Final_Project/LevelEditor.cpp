@@ -208,11 +208,16 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 
 	// Scale Button
 	if (sPressed) {
-		if (selected_object_ == nullptr) {
-			sPressed = false;
+		if (rightClickPressed) { // I need something that works more :/
+			rightClickPressed = false;
 		}
 		else {
-			scale_tool_->SetVisible(true, true, true); // Show the tool arrows
+			if (selected_object_ == nullptr) {
+				sPressed = false;
+			}
+			else {
+				scale_tool_->SetVisible(true, true, true); // Show the tool arrows
+			}
 		}
 	}
 	else {
@@ -247,6 +252,9 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	mousePos = p;
 	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1)) {
 		leftClickPressed = true;
+	}
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3)) {
+		rightClickPressed = true;
 	}
 	return true;
 }
@@ -445,9 +453,6 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
-		}
-		else {
-			rightClickPressed = true;
 		}
 	}
 	return true;
