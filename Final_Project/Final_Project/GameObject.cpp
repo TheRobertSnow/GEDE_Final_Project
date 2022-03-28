@@ -34,6 +34,10 @@ GameObject::GameObject(GameObject* src)
 	entity_->setCastShadows(entity_->getCastShadows());
 	scene_node_->setVisible(src->visible_);
 	scene_node_->setOrientation(src->scene_node_->getOrientation());
+	// Set vis of new sceneNode to true
+	scene_node_->setVisible(true);
+	// Set render group of new object for arrows to still appear on top
+	entity_->setRenderQueueGroup(2);
 	axis_ = src->axis_;
 }
 
@@ -50,7 +54,10 @@ GameObject::GameObject(SceneManager* scene_manager, Ogre::String mesh_file_name,
 	scene_node_->setScale(scale);
 	scene_node_->setVisible(visible);
 	scene_node_->setOrientation(rot);
+	// Set vis of new sceneNode to true
 	scene_node_->setVisible(true);
+	// Set render group of new object for arrows to still appear on top
+	entity_->setRenderQueueGroup(2);
 	axis_ = axis;
 }
 

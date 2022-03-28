@@ -128,36 +128,6 @@ void LevelEditor::populateScene()
 	rotatex->entity_->setRenderQueueGroup(3);
 	rotatey->entity_->setRenderQueueGroup(3);
 	rotatez->entity_->setRenderQueueGroup(3);
-
-	cout << &RenderQueue::_getQueueGroups;
-	cout << "render default: " << &RenderQueue::getDefaultQueueGroup;
-	cout << "render default priority: " << &RenderQueue::getDefaultRenderablePriority;
-	cout << "Render Group for arrow: " << rotatex->entity_->getRenderQueueGroup();
-}
-
-void LevelEditor::overlayShit()
-{
-	panel_ = static_cast<Ogre::OverlayContainer*>(Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("Panel", "myPanel"));
-	panel_->setMetricsMode(Ogre::GMM_PIXELS);
-	panel_->setPosition(0, 0);
-	panel_->setDimensions(1200.0f, 720.0f);
-	panel_->setColour(Ogre::ColourValue::Red);
-	panel_->show();
-
-	overlay_ = Ogre::OverlayManager::getSingletonPtr()->create("myOverlay");
-	overlay_->add2D(panel_);
-	overlay_->show();
-
-	text = static_cast<Ogre::TextAreaOverlayElement*>(Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("TextArea", "myText"));
-	text->setMetricsMode(Ogre::GMM_PIXELS);
-	text->setPosition(1200 / 2.0f, 720 / 2.0f);
-	text->setDimensions(400.0f, 50.0f);
-	text->setCaption(Ogre::DisplayString("Hallo"));
-	text->setCharHeight(25.0f);
-	text->setColour(Ogre::ColourValue::Blue);
-	text->show();
-
-	panel_->addChild(text);
 }
 
 bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
@@ -224,6 +194,19 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 		if (leftClickPressed) {
 			left_click_up = true;
 			leftClickPressed = false;
+		}
+	}
+
+	// More Mouse stuff
+	if (right_click_up) right_click_up = false;
+	if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(3)) {
+		if (!rightClickPressed) {
+			rightClickPressed = true;
+		}
+	}
+	else {
+		if (rightClickPressed) {
+			rightClickPressed = false;
 		}
 	}
 
@@ -340,17 +323,19 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	else if (evt.keysym.sym == 115)
 	{
 		// Add check if !rightclickpressed
-		if (sPressed) {
-			sPressed = false;
+		if (!rightClickPressed) {
+			if (sPressed) {
+				sPressed = false;
+			}
+			else {
+				sPressed = true;
+			}
+			mPressed = false;
+			rPressed = false;
+			move_tool_->ShowBoundingBoxes(false, false, false);
+			scale_tool_->ShowBoundingBoxes(false, false, false);
+			rotate_tool_->ShowBoundingBoxes(false, false, false);
 		}
-		else {
-			sPressed = true;
-		}
-		mPressed = false; 
-		rPressed = false;
-		move_tool_->ShowBoundingBoxes(false, false, false);
-		scale_tool_->ShowBoundingBoxes(false, false, false);
-		rotate_tool_->ShowBoundingBoxes(false, false, false);
 	}
 	// r = 114
 	else if (evt.keysym.sym == 114)
@@ -375,9 +360,6 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 		action_type = DELETE;
 		removeSelectedGameObject();
 		action_type = STATIC;
-	}
-	else {
-		cout << evt.keysym.sym;
 	}
 	return true;
 }
@@ -499,7 +481,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					// Check if two of these are true then some arrow is clicked
 					if (move_tool_->GetShowBoundingBox() != "" || scale_tool_->GetShowBoundingBox() != "" || rotate_tool_->GetShowBoundingBox() != "") {
 						if (move_arrows_clicked_count == 0 || scale_arrows_clicked_count == 0 || rotate_arrows_clicked_count == 0) {
-							cout << "Click outside box and arrow when arrow selected";
+							// Click outside box and arrow when arrow selected
 							// Turn off tool and deselect box
 							LevelEditor::resetTools();
 							selected_object_->setSelected(false);
@@ -507,7 +489,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 						}
 					}
 					else {
-						cout << "Click outside box when no tool selected";
+						// Click outside box when no tool selected
 						// deselect box
 						selected_object_->setSelected(false);
 						selected_object_ = nullptr;
@@ -559,9 +541,6 @@ void LevelEditor::duplicateSelectedGameObject()
 	move_tool_->ShowBoundingBoxes(false, false, false);
 	scale_tool_->ShowBoundingBoxes(false, false, false);
 	rotate_tool_->ShowBoundingBoxes(false, false, false);
-
-	// Set vis of new sceneNode to true
-	selected_object_->scene_node_->setVisible(true);
 }
 
 void LevelEditor::resetTools()
