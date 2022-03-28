@@ -104,11 +104,11 @@ void LevelEditor::populateScene()
 	movez->entity_->setRenderQueueGroup(3);
 
 	// Scale Tool Arrows
-	GameObject* scalex = new GameObject(scene_manager_, "X_arrow.mesh", Vector3(2, 0, 0), Vector3(1, 1, 1), false, false, 270, 0, "x");
+	GameObject* scalex = new GameObject(scene_manager_, "X_cube.mesh", Vector3(2, 0, 0), Vector3(1, 1, 1), false, false, 270, 0, "x");
 	scale_tool_list_.push_back(scalex);
-	GameObject* scaley = new GameObject(scene_manager_, "Y_arrow.mesh", Vector3(0, 2, 0), Vector3(1, 1, 1), false, false, 0, 90, "y");
+	GameObject* scaley = new GameObject(scene_manager_, "Y_cube.mesh", Vector3(0, 2, 0), Vector3(1, 1, 1), false, false, 0, 90, "y");
 	scale_tool_list_.push_back(scaley);
-	GameObject* scalez = new GameObject(scene_manager_, "Z_arrow.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 180, 0, "z");
+	GameObject* scalez = new GameObject(scene_manager_, "Z_cube.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 180, 0, "z");
 	scale_tool_list_.push_back(scalez);
 	scale_tool_ = new ScaleTool(scalex->scene_node_, scaley->scene_node_, scalez->scene_node_);
 
