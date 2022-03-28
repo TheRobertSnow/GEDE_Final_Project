@@ -18,6 +18,7 @@ void LevelEditor::setup()
 	setupSceneManager();
 	setupCamera();
 	populateScene();
+	//overlayShit();
 	setupInputManager();
 }
 
@@ -65,6 +66,8 @@ void LevelEditor::populateScene()
 	// Specify the material that is going to be used to render the floor tiles
 	groundEntity->setMaterialName("Custom/BrickTiles");
 
+	groundEntity->setRenderQueueGroup(1);
+
 	// Set Shadow Technique
 	scene_manager_->setShadowTechnique(Ogre::ShadowTechnique::SHADOWTYPE_STENCIL_MODULATIVE);
 
@@ -84,6 +87,9 @@ void LevelEditor::populateScene()
 	GameObject* newObj2 = new GameObject(scene_manager_, "cube.mesh", Vector3(2, 0, 0), Vector3(0.01, 0.01, 0.01), true, true, 0, 0, "");
 	game_object_list_.push_back(newObj2);
 
+	newObj->entity_->setRenderQueueGroup(2);
+	newObj2->entity_->setRenderQueueGroup(2);
+
 	// Move Tool Arrows
 	GameObject* movex = new GameObject(scene_manager_, "X_arrow.mesh", Vector3(2, 0, 0), Vector3(1, 1, 1), false, false, 270, 0, "x");
 	move_tool_list_.push_back(movex);
@@ -92,6 +98,10 @@ void LevelEditor::populateScene()
 	GameObject* movez = new GameObject(scene_manager_, "Z_arrow.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 180, 0, "z");
 	move_tool_list_.push_back(movez);
 	move_tool_ = new MoveTool(movex->scene_node_, movey->scene_node_, movez->scene_node_);
+
+	movex->entity_->setRenderQueueGroup(3);
+	movey->entity_->setRenderQueueGroup(3);
+	movez->entity_->setRenderQueueGroup(3);
 
 	// Scale Tool Arrows
 	GameObject* scalex = new GameObject(scene_manager_, "X_arrow.mesh", Vector3(2, 0, 0), Vector3(1, 1, 1), false, false, 270, 0, "x");
@@ -102,17 +112,53 @@ void LevelEditor::populateScene()
 	scale_tool_list_.push_back(scalez);
 	scale_tool_ = new ScaleTool(scalex->scene_node_, scaley->scene_node_, scalez->scene_node_);
 
+	scalex->entity_->setRenderQueueGroup(3);
+	scaley->entity_->setRenderQueueGroup(3);
+	scalez->entity_->setRenderQueueGroup(3);
+
 	// Rotate Tool Arrows
-	GameObject* rotatex = new GameObject(scene_manager_, "X_sphere.mesh", Vector3(2, 0, 0), Vector3(1, 1, 1), false, false, 0, 0, "x");
+	GameObject* rotatex = new GameObject(scene_manager_, "X_sphere.mesh", Vector3(4, 0, 0), Vector3(1.5, 1.5, 1.5), false, false, 0, 0, "x");
 	rotate_tool_list_.push_back(rotatex);
-	GameObject* rotatey = new GameObject(scene_manager_, "Y_sphere.mesh", Vector3(0, 2, 0), Vector3(1, 1, 1), false, false, 0, 0, "y");
+	GameObject* rotatey = new GameObject(scene_manager_, "Y_sphere.mesh", Vector3(0, 4, 0), Vector3(1.5, 1.5, 1.5), false, false, 0, 0, "y");
 	rotate_tool_list_.push_back(rotatey);
-	GameObject* rotatez = new GameObject(scene_manager_, "Z_sphere.mesh", Vector3(0, 0, 2), Vector3(1, 1, 1), false, false, 0, 0, "z");
+	GameObject* rotatez = new GameObject(scene_manager_, "Z_sphere.mesh", Vector3(0, 0, 4), Vector3(1.5, 1.5, 1.5), false, false, 0, 0, "z");
 	rotate_tool_list_.push_back(rotatez);
 	rotate_tool_ = new RotateTool(rotatex->scene_node_, rotatey->scene_node_, rotatez->scene_node_);
 
+	rotatex->entity_->setRenderQueueGroup(3);
+	rotatey->entity_->setRenderQueueGroup(3);
+	rotatez->entity_->setRenderQueueGroup(3);
+
+	cout << &RenderQueue::_getQueueGroups;
+	cout << "render default: " << &RenderQueue::getDefaultQueueGroup;
+	cout << "render default priority: " << &RenderQueue::getDefaultRenderablePriority;
+	cout << "Render Group for arrow: " << rotatex->entity_->getRenderQueueGroup();
 }
 
+void LevelEditor::overlayShit()
+{
+	panel_ = static_cast<Ogre::OverlayContainer*>(Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("Panel", "myPanel"));
+	panel_->setMetricsMode(Ogre::GMM_PIXELS);
+	panel_->setPosition(0, 0);
+	panel_->setDimensions(1200.0f, 720.0f);
+	panel_->setColour(Ogre::ColourValue::Red);
+	panel_->show();
+
+	overlay_ = Ogre::OverlayManager::getSingletonPtr()->create("myOverlay");
+	overlay_->add2D(panel_);
+	overlay_->show();
+
+	text = static_cast<Ogre::TextAreaOverlayElement*>(Ogre::OverlayManager::getSingletonPtr()->createOverlayElement("TextArea", "myText"));
+	text->setMetricsMode(Ogre::GMM_PIXELS);
+	text->setPosition(1200 / 2.0f, 720 / 2.0f);
+	text->setDimensions(400.0f, 50.0f);
+	text->setCaption(Ogre::DisplayString("Hallo"));
+	text->setCharHeight(25.0f);
+	text->setColour(Ogre::ColourValue::Blue);
+	text->show();
+
+	panel_->addChild(text);
+}
 
 bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 {
@@ -148,9 +194,9 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 
 
 	// Move Button
-	if (xPressed) {
+	if (mPressed) {
 		if (selected_object_ == nullptr) {
-			xPressed = false;
+			mPressed = false;
 		}
 		else {
 			move_tool_->SetVisible(true, true, true); // Show the tool arrows
@@ -161,9 +207,9 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	}
 
 	// Scale Button
-	if (yPressed) {
+	if (sPressed) {
 		if (selected_object_ == nullptr) {
-			yPressed = false;
+			sPressed = false;
 		}
 		else {
 			scale_tool_->SetVisible(true, true, true); // Show the tool arrows
@@ -174,9 +220,9 @@ bool LevelEditor::frameStarted(const Ogre::FrameEvent& evt)
 	}
 
 	// Rotate Button
-	if (zPressed) {
+	if (rPressed) {
 		if (selected_object_ == nullptr) {
-			zPressed = false;
+			rPressed = false;
 		}
 		else {
 			rotate_tool_->SetVisible(true, true, true); // Show the tool arrows
@@ -211,47 +257,47 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	{
 		getRoot()->queueEndRendering();
 	}
-	// x = 120
-	else if (evt.keysym.sym == 120)
+	// m = 109
+	else if (evt.keysym.sym == 109)
 	{
-		if (xPressed) {
-			xPressed = false;
+		if (mPressed) {
+			mPressed = false;
 		}
 		else {
-			xPressed = true;
+			mPressed = true;
 		}
-		yPressed = false;
-		zPressed = false;
+		sPressed = false;
+		rPressed = false;
 		move_tool_->ShowBoundingBoxes(false, false, false);
 		scale_tool_->ShowBoundingBoxes(false, false, false);
 		rotate_tool_->ShowBoundingBoxes(false, false, false);
 	}
-	// y = 121
-	else if (evt.keysym.sym == 121)
+	// s = 115
+	else if (evt.keysym.sym == 115)
 	{
-		if (yPressed) {
-			yPressed = false;
+		if (sPressed) {
+			sPressed = false;
 		}
 		else {
-			yPressed = true;
+			sPressed = true;
 		}
-		xPressed = false; 
-		zPressed = false;
+		mPressed = false; 
+		rPressed = false;
 		move_tool_->ShowBoundingBoxes(false, false, false);
 		scale_tool_->ShowBoundingBoxes(false, false, false);
 		rotate_tool_->ShowBoundingBoxes(false, false, false);
 	}
-	// z = 122
-	else if (evt.keysym.sym == 122)
+	// r = 114
+	else if (evt.keysym.sym == 114)
 	{
-		if (zPressed) {
-			zPressed = false;
+		if (rPressed) {
+			rPressed = false;
 		}
 		else {
-			zPressed = true;
+			rPressed = true;
 		}
-		xPressed = false;
-		yPressed = false;
+		mPressed = false;
+		sPressed = false;
 		move_tool_->ShowBoundingBoxes(false, false, false);
 		scale_tool_->ShowBoundingBoxes(false, false, false);
 		rotate_tool_->ShowBoundingBoxes(false, false, false);
@@ -259,6 +305,9 @@ bool LevelEditor::keyPressed(const OgreBites::KeyboardEvent& evt)
 	else if (evt.keysym.sym == OgreBites::SDLK_DELETE)
 	{
 		removeSelectedGameObject();
+	}
+	else {
+		cout << evt.keysym.sym;
 	}
 	return true;
 }
@@ -306,10 +355,9 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					scale_tool_->MoveToolToNewEntity(i->scene_node_);
 					rotate_tool_->MoveToolToNewEntity(i->scene_node_);
 					obj_was_selected = true;
-					cout << "selected_object_: " << selected_object_ << endl << "list item: " << i << endl;
 				}
 			}
-			if (xPressed) {
+			if (mPressed) {
 				std::pair<bool, Ogre::Real> resultMove;
 				for (auto const& i : move_tool_list_) {
 					resultMove = mouseRay.intersects(i->scene_node_->_getWorldAABB());
@@ -327,7 +375,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
-			if (yPressed) {
+			if (sPressed) {
 				std::pair<bool, Ogre::Real> resultScale;
 				for (auto const& i : scale_tool_list_) {
 					resultScale = mouseRay.intersects(i->scene_node_->_getWorldAABB());
@@ -345,7 +393,7 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
-			if (zPressed) {
+			if (rPressed) {
 				std::pair<bool, Ogre::Real> resultRotate;
 				for (auto const& i : rotate_tool_list_) {
 					resultRotate = mouseRay.intersects(i->scene_node_->_getWorldAABB());
@@ -363,7 +411,11 @@ bool LevelEditor::mousePressed(const OgreBites::MouseButtonEvent& evt)
 					}
 				}
 			}
-			leftClickPressed = true;
+			if (!obj_was_selected) {
+				// Check if two of these are true then some arrow is clicked
+				//&& move_tool_->GetShowBoundingBox() == "" && scale_tool_->GetShowBoundingBox() == "" && rotate_tool_->GetShowBoundingBox() == ""
+				cout << "Click outside box when no tool selected";
+			}
 		}
 	}
 	return true;
@@ -400,9 +452,9 @@ void LevelEditor::duplicateSelectedGameObject()
 	game_object_list_.push_back(duplicateOfObject);
 
 	// Change active tool to move tool because we can assume the creator wants to move the duplicated object
-	xPressed = true;
-	yPressed = false;
-	zPressed = false;
+	mPressed = true;
+	sPressed = false;
+	rPressed = false;
 	move_tool_->ShowBoundingBoxes(false, false, false);
 	scale_tool_->ShowBoundingBoxes(false, false, false);
 	rotate_tool_->ShowBoundingBoxes(false, false, false);
@@ -410,13 +462,13 @@ void LevelEditor::duplicateSelectedGameObject()
 
 void LevelEditor::resetTools()
 {
-	xPressed = false;
+	mPressed = false;
 	move_tool_->SetVisible(false, false, false);
 	move_tool_->ShowBoundingBoxes(false, false, false);
-	yPressed = false;
+	sPressed = false;
 	scale_tool_->SetVisible(false, false, false);
 	scale_tool_->ShowBoundingBoxes(false, false, false);
-	zPressed = false;
+	rPressed = false;
 	rotate_tool_->SetVisible(false, false, false);
 	rotate_tool_->ShowBoundingBoxes(false, false, false);
 }

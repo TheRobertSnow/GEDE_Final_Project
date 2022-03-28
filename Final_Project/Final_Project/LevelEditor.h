@@ -21,6 +21,7 @@ public:
 	void setupSceneManager();
 	void setupCamera();
 	void populateScene();
+	void overlayShit();
 	void removeSelectedGameObject();
 	void duplicateSelectedGameObject();
 	void resetTools();
@@ -50,8 +51,12 @@ public:
 	bool object_selected_ = false;
 	SDL_Point mousePos;
 	bool leftClickPressed = false;
-	bool xPressed = false;
-	bool yPressed = false;
-	bool zPressed = false;
+	bool mPressed = false;
+	bool sPressed = false;
+	bool rPressed = false;
 	bool d_pressed_ = false;
+
+	Ogre::OverlayContainer* panel_;
+	Ogre::Overlay* overlay_;
+	Ogre::TextAreaOverlayElement* text;
 };

@@ -60,7 +60,7 @@ void RotateTool::RotateSelectedEntity(SceneNode* selected_entity, SDL_Point new_
 void RotateTool::MoveToolToNewEntity(SceneNode* selected_entity)
 {
 	Vector3 selectedEntityPos = selected_entity->getPosition();
-	x_arrow_->setPosition(selectedEntityPos.x + 2, selectedEntityPos.y, selectedEntityPos.z);
-	y_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 2, selectedEntityPos.z);
-	z_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 2);
+	x_arrow_->setPosition(selectedEntityPos.x + 4, selectedEntityPos.y, selectedEntityPos.z);
+	y_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y + 4, selectedEntityPos.z);
+	z_arrow_->setPosition(selectedEntityPos.x, selectedEntityPos.y, selectedEntityPos.z + 4);
 }
