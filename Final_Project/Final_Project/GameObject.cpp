@@ -22,25 +22,6 @@ GameObject::GameObject(SceneManager* scene_manager, const char* mesh_file_name,
 
 }
 
-void GameObject::RotateObject(Quaternion q, SceneNode* newNode) {
-	// roll (x-axis rotation)
-	double sinr_cosp = 2 * (q.w * q.x + q.y * q.z);
-	double cosr_cosp = 1 - 2 * (q.x * q.x + q.y * q.y);
-	newNode->roll(Ogre::Degree(std::atan2(sinr_cosp, cosr_cosp)));
-
-	// pitch (y-axis rotation)
-	double sinp = 2 * (q.w * q.y - q.z * q.x);
-	if (std::abs(sinp) >= 1)
-		newNode->pitch(Ogre::Degree(std::copysign(M_PI / 2, sinp)));
-	else
-		newNode->pitch(Ogre::Degree(std::asin(sinp)));
-
-	// yaw (z-axis rotation)
-	double siny_cosp = 2 * (q.w * q.z + q.x * q.y);
-	double cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z);
-	newNode->yaw(Ogre::Degree(std::atan2(siny_cosp, cosy_cosp)));
-}
-
 // Duplication constructor
 GameObject::GameObject(GameObject* src)
 {
@@ -54,6 +35,23 @@ GameObject::GameObject(GameObject* src)
 	scene_node_->setVisible(src->visible_);
 	scene_node_->setOrientation(src->scene_node_->getOrientation());
 	axis_ = src->axis_;
+}
+
+GameObject::GameObject(SceneManager* scene_manager, Ogre::String mesh_file_name,
+	Vector3 position, Vector3 scale, bool castShadows,
+	bool visible, Ogre::Quaternion rot, String axis)
+{
+	is_selected_ = true;
+	scene_manager_ = scene_manager;
+	entity_ = scene_manager_->createEntity(mesh_file_name);
+	scene_node_ = scene_manager_->getRootSceneNode()->createChildSceneNode();
+	scene_node_->attachObject(entity_);
+	scene_node_->setPosition(position);
+	scene_node_->setScale(scale);
+	scene_node_->setVisible(visible);
+	scene_node_->setOrientation(rot);
+	scene_node_->setVisible(true);
+	axis_ = axis;
 }
 
 GameObject::~GameObject()

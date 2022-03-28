@@ -8,7 +8,7 @@ material Y_arrow_mat {
             specular 0.481228 0.494626 0.511964 1.0 64.0
             alpha_to_coverage off
             colour_write on
-            depth_check on
+            depth_check off
             depth_func less_equal
             illumination_stage per_light
             light_clip_planes off
